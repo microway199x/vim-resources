@@ -1,0 +1,19 @@
+# config and init git
+git config --global user.name microway
+git config --global user.email microway199@163.com
+
+# create local respoistory, if no dir set, default is current dir
+git init ./user/dir/  
+
+# add new file
+git add new_file_name  
+
+# commit new file
+git commit -m " "
+git status
+
+# git connect with github
+git remote add local-repository-name https://github.com/MicroWay199/vim-resources
+git pull
+git push
+

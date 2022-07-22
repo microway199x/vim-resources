@@ -1,0 +1,3 @@
++parser_out_dir+/home/micro/git/vim-resources/micro_plugin/vtags.db/parser_out/pub/
++parser_file_standalone+0
+-v /home/micro/git/vim-resources/micro_plugin/test.v -s parser_test_v_0.py

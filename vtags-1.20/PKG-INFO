@@ -1,0 +1,12 @@
+Metadata-Version: 1.2
+Name: vtags
+Version: 1.20
+Summary: Python subprocess interface
+Home-page: https://my.oschina.net/u/2520885
+Author: Jun Cao
+Author-email: 664089062@qq.com
+License: Jun Cao
+Description: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 2.6
+Classifier: Programming Language :: Python :: 2.7

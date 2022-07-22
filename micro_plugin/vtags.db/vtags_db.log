@@ -1,0 +1,1 @@
+parser_from_file_list: /home/micro/git/vim-resources/vtags-3.10/Parser/parser /home/micro/git/vim-resources/micro_plugin/vtags.db/parser_out/parser_pub.fileslist /home/micro/git/vim-resources/micro_plugin/vtags.db/parser.log

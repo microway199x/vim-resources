@@ -1,0 +1,9 @@
+Start Parser FileList: /home/micro/git/vim-resources/micro_plugin/vtags.db/parser_out/parser_pub.fileslist
+FILE:/home/micro/git/vim-resources/micro_plugin/vtags.db/parser_out/parser_pub.fileslist
+FILE:/home/micro/git/vim-resources/micro_plugin/test.v
+RTL WARNING 0-9: io not in valid module !
+RTL WARNING 1-9: io not in valid module !
+RTL WARNING 2-10: io not in valid module !
+RTL WARNING 3-10: io not in valid module !
+RTL WARNING 4-10: io not in valid module !
+RTL WARNING 5-10: io not in valid module !
