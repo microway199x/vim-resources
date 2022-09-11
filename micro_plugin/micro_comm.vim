@@ -55,7 +55,7 @@ endif
 set guioptions=+m               "显示菜单栏，如果不设置则都显示
 "set guioptions=+T              "显示工具栏,guioptions如果设置了则只能赋一个值，
 
-set scrolloff=3                 "设置光标所在位置最高和最低到边界行数为3
+set scrolloff=7                 "设置光标所在位置最高和最低到边界行数为3
 set incsearch
 set autoindent                  " 自动对齐
 set softtabstop=4               "set tab = insertspace "缩进宽度为4个字符"  
