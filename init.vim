@@ -43,20 +43,22 @@ else
 endif
 
 if(g:iswindows)
-    if(has("nvim"))
-	source $HOME\AppData\Local\nvim\micro_plugin\micro_comm.vim
-	source $HOME\AppData\Local\nvim\micro_plugin\micro_keymap.vim
-	source $HOME\AppData\Local\nvim\micro_plugin\micro_file_header.vim
-	source $HOME\AppData\Local\nvim\micro_plugin\micro_misc.vim
-	source $HOME\AppData\Local\nvim\micro_plugin\micro_verilog_cfg.vim
-	source $HOME\AppData\Local\nvim\micro_plugin\micro_perl.vim 
-    else
-	source $VIM\micro_plugin\micro_comm.vim
-	source $VIM\micro_plugin\micro_keymap.vim
-	source $VIM\micro_plugin\micro_file_header.vim
-	source $VIM\micro_plugin\micro_misc.vim
-	source $VIM\micro_plugin\micro_verilog_cfg.vim
-	source $VIM\micro_plugin\micro_perl.vim 
+    if has('nvim')
+        source ~\Appdata\Local\nvim\micro_plugin\micro_comm.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_keymap.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_file_header.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_misc.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_verilog_cfg.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_perl.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_plugin_cfg.vim
+    else 
+        source $VIM\micro_plugin\micro_comm.vim
+        source $VIM\micro_plugin\micro_keymap.vim
+        source $VIM\micro_plugin\micro_file_header.vim
+        source $VIM\micro_plugin\micro_misc.vim
+        source $VIM\micro_plugin\micro_verilog_cfg.vim
+        source $VIM\micro_plugin\micro_perl.vim
+        source $VIM\micro_plugin\micro_plugin_cfg.vim
     endif
 else 
     source ~/git/vim-resources/micro_plugin/micro_comm.vim
@@ -65,6 +67,7 @@ else
     source ~/git/vim-resources/micro_plugin/micro_misc.vim
     source ~/git/vim-resources/micro_plugin/micro_verilog_cfg.vim
     source ~/git/vim-resources/micro_plugin/micro_perl.vim
+    source ~/git/vim-resources/micro_plugin/micro_plugin_cfg.vim
 endif
 
 "" windows 到 linux下，提示^M为未知命令，使用dos2unix命令
