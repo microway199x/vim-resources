@@ -1,34 +1,34 @@
-" Compiler:Ncverilog
+" Vim compiler file
+" Compiler: Cadence NCVerilog
 
-" Only do this when not done yet for this buffer
 if exists("current_compiler")
-    finish
+  finish
 endif
+let current_compiler = "ncverilog"
 
-" Don't load another plugin for this buffer
-let current_compiler = 'ncverilog'
-
-if exists(":CompilerSet") !=2
+if exists(":CompilerSet") != 2
   command -nargs=* CompilerSet setlocal <args>
 endif
 
+let s:cpo_save = &cpo
+set cpo-=C
 
-" Save the compatibility options and temporarily switch to vim defaults
-let s:cpo_save = &cpoptions
-set cpoptions -=C
+" Error level formats
+" Based on https://github.com/vhda/verilog_systemverilog.vim/issues/88
+CompilerSet errorformat =%.%#:\ *%t\\,%.%#\ %#\(%f\\,%l\|%c\):\ %m
+CompilerSet errorformat+=%.%#:\ *%t\\,%.%#\ %#\(%f\\,%l\):\ %m
+" Multi-line error messages
+CompilerSet errorformat+=%A%.%#\ *%t\\,%.%#:\ %m,%ZFile:\ %f\\,\ line\ =\ %l\\,\ pos\ =\ %c
 
-set makeprg=irun\ -nohistory\ -nolog\ -clean\ -ntcnotchks\ -q\ -nocopyright\ -c
-"error level format
-CompilerSet errorformat = %.%#:\ *%t\\,%.%#\ %#\(%f\\,%l\|%c\):\ %m
-CompilerSet errorformat += %.%#:\ *%t\\,%.%#\ %#\(%f\\,%l\):\ %m
-"multi line format
-CompilerSet errorformat += %A%.%#\ *%t\\,%.%#:\ %m,%ZFile:\ %f\\,\ line\ =\ %l\\,\ pos\ =\ %c 
-
-"ignore warning
-if (exists("g:verilog_err_level")&&(g:verilog_err_level == "error"))
-    CompilerSet errorformat ^= %-G%.%#\ *W\\,%.%#:\ %m
+" Ignore Warning level formats
+if (!exists("g:verilog_efm_level") || g:verilog_efm_level == "error")
+  CompilerSet errorformat^=%-G%.%#\ *W\\,%.%#:\ %m
 endif
 
-" Restore saved compatibility options
-let &cpoptions = s:cpo_save
+" Load common errorformat configurations
+runtime compiler/verilog_common.vim
+
+let &cpo = s:cpo_save
 unlet s:cpo_save
+
+" vi: sw=2 sts=2:
