@@ -12,8 +12,10 @@ map n<tab> :tabnew
 
 nmap <Leader>f v%zf
 
-map <Up> kzz     "previous line and center current line to middle of window
-map <Down> jzz   "next line and center current line to middle of window
+"previous line and center current line to middle of window
+nnoremap <Up> kzz     
+"next line and center current line to middle of window
+nnoremap <Down> jzz  
 nnoremap <esc><esc>  :nohl<cr>   " remove serach hightlight
 
 "" use "cc" command, clear current line and indent line then insert

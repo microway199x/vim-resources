@@ -43,13 +43,23 @@ else
 endif
 
 if(g:iswindows)
-    source $VIM\micro_plugin\micro_comm.vim
-    source $VIM\micro_plugin\micro_keymap.vim
-    source $VIM\micro_plugin\micro_file_header.vim
-    source $VIM\micro_plugin\micro_misc.vim
-    source $VIM\micro_plugin\micro_verilog_cfg.vim
-    source $VIM\micro_plugin\micro_perl.vim
-    source $VIM\micro_plugin\micro_plugin_cfg.vim
+    if has('nvim')
+        source ~\Appdata\Local\nvim\micro_plugin\micro_comm.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_keymap.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_file_header.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_misc.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_verilog_cfg.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_perl.vim
+        source ~\Appdata\Local\nvim\micro_plugin\micro_plugin_cfg.vim
+    else 
+        source $VIM\micro_plugin\micro_comm.vim
+        source $VIM\micro_plugin\micro_keymap.vim
+        source $VIM\micro_plugin\micro_file_header.vim
+        source $VIM\micro_plugin\micro_misc.vim
+        source $VIM\micro_plugin\micro_verilog_cfg.vim
+        source $VIM\micro_plugin\micro_perl.vim
+        source $VIM\micro_plugin\micro_plugin_cfg.vim
+    endif
 else 
     source ~/git/vim-resources/micro_plugin/micro_comm.vim
     source ~/git/vim-resources/micro_plugin/micro_keymap.vim

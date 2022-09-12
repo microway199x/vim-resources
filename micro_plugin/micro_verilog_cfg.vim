@@ -7,6 +7,26 @@ if(g:islinux)
     source ~/git/vim-resources/vtags-3.10/vtags_vim_api.vim
 endif
 
+"" verilog_systemverilog.vim setting
+function V_sv_compile(...)
+
+    if(a:0 >= 1)   " a:0 means the number of ... variable args num, a:000 is the args list
+        let l:other_options = a:1 
+    else 
+        let l:other_options = ""
+    endif
+
+    :compiler vcs   "can use execute("compiler vcs")
+    "VCS options setting
+    "let vcs_cmd = "vlogan +v2k -full64 +vcs_flush+all +lint=all -sverilog +libext+.v+.sv -lva " . l:other_options . "%"
+    let vcs_cmd = "vcs +v2k -full64 +vcs_flush+all +lint=all -sverilog +libext+.v+.sv -lva " . l:other_options . "%"
+    let &makeprg= vcs_cmd
+    echo "verilog compiler and options setted"
+endfunction
+"" when write buffer, do make automatic,
+" autocmd BufWritePost *.v exec ":make" 
+autocmd BufRead BufNew BufNewFile *.v *.sv exec ":call V_sv_compile()"
+
 
 
 
