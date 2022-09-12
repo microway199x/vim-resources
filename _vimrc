@@ -74,4 +74,6 @@ endif
 "" 将windows下的换行符(\n\r)替换为linux下的换行符(\n)
 "" sudo apt install dos2unix
 "" dos2unix filename
+"" execute: system/.vimrc --> 1st_user/.vimrc --> 2ed_user/.vimrc
+"" can use command: <:scriptname> print the script execute sequence, then check 
 
