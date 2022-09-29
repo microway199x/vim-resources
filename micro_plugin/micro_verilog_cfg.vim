@@ -7,6 +7,7 @@ if(g:islinux)
     source ~/git/vim-resources/vtags-3.10/vtags_vim_api.vim
 endif
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" verilog_systemverilog.vim setting
 function V_sv_compile(...)
 
@@ -28,6 +29,16 @@ endfunction
 autocmd BufRead BufNew BufNewFile *.v *.sv exec ":call V_sv_compile()"
 
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" emacs verilog-mode setting
+nmap <Leader>vm :call V_verilog_mode()<CR>
+function V_verilog_mode()
+    exec "w!"
+    let fname = expand('%')  " get current buffer filename 
+    let v_cmd = "!emacs --batch " . fname . " -f verilog-batch-auto"
+    " refresh current buffer 
+    :e
+endfunc
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
