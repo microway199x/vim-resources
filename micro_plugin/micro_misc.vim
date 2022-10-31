@@ -46,7 +46,7 @@ endfunc
 source $VIMRUNTIME/macros/matchit.vim 
 runtime! macros/matchit.vim 
 "if not work well,use autocmd BufNweFile,BufRead *   let b:match_wrods 
-let b:match_wrods='\<begin\>:\<end\>' .
+let b:match_words='\<begin\>:\<end\>' .
                 \ '\<module\>:\<endmodule\>' .
                 \ '\<case\>:\<endcase\>' "can added any pairs like this 
 
