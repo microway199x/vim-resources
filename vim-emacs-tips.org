@@ -1,0 +1,109 @@
+* 高效编辑tips
+** VIM编辑器
+*** VIM读入指定文件并且插入到当前光标位置
+1. VIM命令 :r (:read命令)
+2. 例子 :r ./example.tem 读入example.tem文件中的内容，并且快速插入到当
+   前光标位置
+   
+*** Gvim调用外部命令[emacs 实现自动连线和声明例化]
+1. 命令 command! -nargs=+ xxxx (GVIM help command查看具体使用)
+2. gvim调用emacs试下自动连线、声明等
+  command! -nargs=+ Vlog !emacs --batch <args> -f verilog-batch-auto
+  然后在gvim中使用【:Vlog file-name】,就可以调用emacs的verilog-mode实现
+  自动连线；
+*** VIM编辑器快速添加工具检查方式 
+1. 以插件，或者在 .vimrc中添加工具检查命令
+2. 在vimfile/compiler/perl.vim为例，添加perl.vim compiler检查log过滤规
+   则,命令为 compiler perl，，调用perl 的compiler选项
+3. copen命令为打开quick fix窗口，可用于显示log; cclose为关闭quickfix窗
+   口
+4. vim script中，可通过system("ls"),命令调用系统命令；（此处以系统ls命
+   令为例）
+*** VIM 打开文件时直接执行对应的命令
+eg:  vim -c "user_command" filename 
+     打开filename文件，并且同时执行user_command
+*** VIM map映射的时候VIML中 " 不是注释符
+eg: nmap <Leader>y "+y  /// 映射复制系统粘贴板复制
+    nmap xx "yy         /// 将 "yy 按键序列映射到 xx
+*** VIM script脚本
+注意：search函数对弈 ^ 行首锚定符的正则匹配不能正确匹配？一般需要和 =~
+正则匹配配合匹配行首锚定符号？？？
+#+begin_src
+while search(“pattern”,W) > 0 ///依次搜索到文件尾
+
+eg:::
+while search(“always.*rst”,W) > 0 ///依次搜索到文件尾
+    ... 
+    do something 
+    ... 
+endwhile
+#+end_src
+
+*** VIM根据文件调用命令编译
+compilerset
+makeprg:在compiler/XXX.vim设置命令
+compile:make
+*** VIM高级替换 --- 定位替换，
++ 需求：替换整个匹配文本中的一部分
++ eg：
+  #+begin_src
+    //原文本：
+    MAC0 25 speed
+    MAC0 26 speed
+    MAC0 27 speed
+    MAC0 28 speed
+
+    //定位替换命令，注意\zs...\ze部分
+    :%s/MAC0.*\zs\d\d\ze.*speed/20/gc
+
+    //替换结果:
+    MAC0 20 speed
+    MAC0 20 speed
+    MAC0 20 speed
+    MAC0 20 speed
+  #+end_src
+** Emacs编辑器
+*** Elisp正则表达式
+**** 获得选中区域的文本，并且正则匹配与捕获
+#+begin_src Elisp
+;;eg: regex for: "input signal_name", match "input" and "signal_name" and message out
+(defun regex-test ()
+  (interactive)
+  (let ((str-get (buffer-substring (region-beginning) (region-end))))
+    (message str-get)
+    (if (string-match "\\(input\\)[[:space:]]+\\([[:word:]]+\\)" str-get)
+	;; if match success, return t, else return nil
+        ;; use \\(regular-experssion\\) to match and capture group,
+	;;str-get, the string use for regular expression match and capture
+	;; use match-string get capture result
+	(progn
+	    (message (match-string 0 str-get))  ;; 0 for all string matched
+	    (message (match-string 1 str-get))  ;; 1 for 1st group matched, from left to right
+	    (message (match-string 2 str-get))) ;; 2 for 2ed group matched, from left to right
+    )))
+#+end_src Elisp
+**** 命令行内正则替换 与 捕获
+#+begin_src
+eg: 以file_123  替换为 directory_123为例
+step-1: M-x replace-regexp
+step-2: 输入需要搜索与替换的字符串 \(file\)_\([0-9]+\),
+;; 捕获的结果直接使用从左致由  \1 \2表示，
+;;此处的捕获使用 \(reg-exp\),不是双斜杠
+step-3:输入要替换的字符, 比如替换为 directory_\2
+;; \2为正则表达式的第二个组捕获的结果，可以直接使用
+#+end_src
+*** Emacs命令绑定：kbd
++ 绑定单个命令
+  #+begin_src
+    (global-set-key (kbd "C-c x") (kbd "M-x org-mode-restart"))
+  #+end_src
+
++ 绑定多个串行命令：比如标记整行命令，先移动到行首C-a,然后标记C-SPC,然
+  后移动到行尾C-e;
+  #+begin_src
+    (global-set-key (kbd "C-c x") (kbd "C-a C-SPC C-e"))
+  #+end_src
+*** eval-after-load, add-hook的区别
++ eval-after-load：根据入口条件，只执行一次，
++ add-hook：每次入口条件满足时，都会执行，可以用于改变每次执行时的行为
+  等
