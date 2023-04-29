@@ -61,3 +61,386 @@ compile:make
     MAC0 20 speed
     MAC0 20 speed
   #+end_src
+* 正则表达式,匹配重复字符串
+** 用正则匹配字符串中重复的字符或符号，不限制重复的次数：
+ #+begin_src
+   var str="aabb..ccee";
+   //  \1 表示的是正则里，第一个小括号捕获到的内容
+   var reg = /(.)\1+/ig;
+   //获取匹配到的重复字符串或者符号
+   //结果为：["aa","bb","..","cc","ee","!!!"]
+   var str_match=str.match(reg); 
+   //把匹配到的字符串替换为单一的；
+   //结果为："ab.ce!";
+   var str_replace=str.replace(reg,“$1"); 
+ #+end_src
+**  匹配类似“ABBB”结构的字符串：
+  也就是以一个字符开头，后面跟着几个不同的重复的字符，如 abb,cdd,egggg等。
+   #+begin_src
+     var str="abbbcdd+!!";
+     //  \1 表示的是正则里，第一个小括号捕获到的内容
+     // (.)(?!\1)(.)\2+ ：用直白的话来解释，
+     // 就是匹配一位任意字符，它的后面不是和它相同的字符，
+     // 再后面是任意一个重复一次或多次的字符。
+     var reg = /(.)(?!\1)(.)\2+/ig;
+     //获取字符内容
+     //结果为：["abbb","cdd","+!!"]
+     var str_match=str.match(reg); 
+     //把匹配到的字符串替换为单一的；
+     //结果为："ab.ce!";
+     var str_replace=str.replace(reg,“$1"); 
+     //把重复的字符替换为一个；
+     //结果为："abcd+!";
+     var str_replace=str.replace(/(.)\1+/ig,“$1"); 
+   #+end_src
+
+    + (?!xxx) 是正则里的一个“语法结构”，是非获取匹配，表示"负向预查"， *约束括
+      号之后的正则匹配* ，意思就是说"后面不能满足xxx条件"，并且不捕获这个小括号
+      匹配到的内容。
+    + 类似的用法还有：(?:n) 、 (?=n) ，更详细的内容，可以看这篇文章，里面有具体
+      的实例，解释的很清楚：
+** 匹配指定位数的重复：
+ 比如，我们要匹配手机号中间四位相同的手机号:
+   #+begin_src
+     var str="16655555123";
+     //手机号都是以1开头的，所以第一位就是1
+     // \d{2} 表示两位数字，
+     // (\d) 表示一位数字，用小括号括起来表示“捕获”，
+             捕获后，可以用“\1”"\2"来引用，
+     // \1{4} 表示捕获第一个用小括号括起来的内容，
+        并且重复四次，综合起来就是五个连续相同的数字。
+     // (?!\1) 这是正则里的一个“语法”，小括号不表示“捕获”，
+        详细的可以看上面的那个实例。这一句表示后面的数字不能
+         和前面捕获的数字相同。
+     var reg = /1\d{2}(\d)\1{4}(?!\1)\d{3}/ig;
+     //获取字符内容
+     //结果为：["abbb","cdd","+!!"]
+     var str_match=str.match(reg); 
+     //把匹配到的字符串替换为单一的；
+     //结果为："ab.ce!";
+     var str_replace=str.replace(reg,“$1"); 
+     //把重复的字符替换为一个；
+     //结果为："abcd+!";
+     var str_replace=str.replace(/(.)\1+/ig,“$1"); 
+   #+end_src
+** 匹配不能重复：
+ 上面说了正则里和“重复”或“相同”相关的内容，下面再来说说正则里“禁止重
+ 复”“不能相同”的情况：
+
+ 实例1：判断数字是否为六位不同的数字组成的数字：
+   #+begin_src
+     var str="123456";
+
+    // (?!) 是正则里的一个“语法结构”,表示“断言后面不是…”的意思；
+    // ^ 表示开头；
+    // \d*?(\d)\d*?\1 
+    // \d表示一个数字， *表示0或多次， ？表示零或一次，
+    // *? 也可以合在一起解释为 匹配零或多次，但尽可能少匹配。
+    // \d*? 合在一起，意思就是“空”或者任意位数的数字。
+    // (\d) 上面说过，就是匹配一位数字，并用括号捕获，
+    // \d*?(\d)\d*? 这一句几乎可以匹配到任何的数字，
+    // 再加上 “\1” 后，也就是正则“\d*?(\d)\d*?\1” 表示的意思就是有重复的数字。
+    // 121 前两位会被正则 “\d*?(\d)\d*?\1” 红色的部分匹配到，1是捕获到的。
+    // 233 前两位会被 “\d*?(\d)\d*?\1” 红色的部分匹配，3是捕获到的。
+    // 42313 前四位，会被“\d*?(\d)\d*?\1” 红色的部分匹配，3是捕获到的。
+    // (?!\d*?(\d)\d*?\1) 意思就是，设定后面的数字，都是不重复的数字的意思。
+     var reg="/^(?!\d*?(\d)\d*?\1)\d{6}$/gi";
+   #+end_src
+* VIM中匹配替换使用函数的方式，以及submatch的用法
+** VIM中替换函数submatch的用法实例
+
+ submatch({nr})函数，只用于:substitute 命令或 substitute() 函数中。它将返回匹配
+ 文本的第{nr}个子匹配。如果{nr}为0，则返回整个匹配文本。将submatch()和其它函数相
+ 结合，可以对替换文本进行更丰富的操作。使用:help submatch()命令，可以查看更多帮
+ 助信息。
+ 1. 更新列表序号,如果希望在第1条之后插入一个新的条目，那么就意味着需要调整后续各
+    个条目的序号：
+    #+begin_src
+      Article 1: 3 Steps To Enable Thesaurus Option
+      Article 2: Steps to Add Custom Header
+      Article 3: Automatic Word Completion
+      Article 4: How To Record and Play Macro
+      Article 5: Make Vim as Your C IDE
+    #+end_src
+    使用以下命令，将第2行及之后各行中的序号分别加1：
+    #+begin_src
+    :2,$s/\d\+/\=submatch(0) + 1/
+    #+end_src
+
+    #+begin_src
+       Article 1: 3 Steps To Enable Thesaurus Option
+       Article 3: Steps to Add Custom Header
+       Article 4: Automatic Word Completion
+       Article 5: How To Record and Play Macro
+       Article 6: Make Vim as Your C ID
+    #+end_src
+
+    请注意，替换命令中并没有使用/g标志，因此将仅仅替换第一个匹配字符，以避免条目
+    文本中的数字也被更改。
+
+ 2. 转换单词大小写
+
+    假设需要在以下条目中，将首个单词的首个字母转换为大写：
+
+    #+begin_src
+      The following activities can be done using vim:
+      a. source code walk through,
+      b. record and play command executions,
+      c. making the vim editor as ide
+    #+end_src
+
+    使用以下命令，将匹配“.”及空格之后的单词字符（0-9A-Za-z），并替换为大写：
+    #+begin_src
+      :%s/\.\s*\w/\=toupper(submatch(0))/g
+    #+end_src
+    结果为
+
+    #+begin_src
+      The following activities can be done using vim:
+      a. Source code walk through,
+      b. Record and play command executions,
+      c. Making the vim editor as ide
+    #+end_src
+
+ 3. 替换文件路径
+
+    将当前光标下的相对路径名，替换为完整的绝对路径名：
+       #+begin_src
+         :s/\f*\%#\f*/\=fnamemodify(submatch(0), ':p')/
+       #+end_src
+    其中，
+      + *\= 表示使用表达式作为替换字符串* （请参考帮助信息:help
+        sub-replace-expression）；
+      + *\f%#\f 将匹配文件名（请参考帮助信息:help /\f） 。
+
+    如果希望将可视化模式下选中的文件名，替换为完整的绝对路径名，那么在命令中使用
+    %V参数：
+    #+begin_src
+      :s/\%V.*\%V/\=fnamemodify(submatch(0), ':p')/
+    #+end_src
+ 4. 数据补零
+
+   将每行数据中不满8位的字符串，向右对齐并在前部以0补足8位：
+    #+begin_src
+      :%s/.*/\=printf('%08s',submatch(0))/g
+    #+end_src
+
+* VIM命令中使用表达式，函数，生成递增序列的方法
+** 在ex命令行中使用expression
++ 不在正则表达时候中，所以expression求值，直接使用 "= expression"即可,
++ 多个表达式在一行输入，通过 “|” 隔开，前一个命令执行完之后执行后面的命令，依
+  次执行
++ 当在正则表达式中使用求值时，由于 "=" 是特殊字符，需要使用 “\=expression"，
++ 当多个表达式分次输入时直接 “：xxx ” 按行输入即可
+** 需求
+    假设文本原来内容是
+   
+    #+begin_src
+      第一行
+      第二行
+      第四行
+      第五行
+    #+end_src
+   
+    插入行号变成
+   
+    #+begin_src
+      1 第一行
+      2 第二行
+      3
+      4 第四行
+      5 第五行
+   
+      //或者如下
+      第一行 line[1]
+      第二行 line[2]
+      第三行 line[3]
+      第四行 line[4]
+    #+end_src
+
+** 使用line()
+
+#+begn_src
+ :g/^/s//\=line('.').' '/
+#+end_src
+
+ line('.')可以返回当前行号, 非常简单，但不太灵活，只能用于显示当前行的行号
+
+** 使用ex命令
+ vim提供了一些可以打印行号的ex命令，如"=", "p # ", "#"
+ *为了获取vim的命令输出，这里需要使用redir*
+ #+begin_src
+ "为前5行加上行号
+ :redir @a | 1,5#|redir END
+ :1,5d | put! a |1d |6d
+ "在粘贴后在前后都多出一行，所以要用d来删除
+ #+end_src
+ 
+** 使用range, setline, getline
+ #+begin_src
+ // range（）可以产生数字序列列表
+ :for i in range(6)
+ :call setline(i, i.' '.getline(i))
+ :endfor
+ #+end_src
+
+ range(6)会产生数字列表1-5, 不包含6
+ 
+** 变量积加
+
+ #+begin_src
+ //这种方法更灵活，可以通过控制i的值变化来控制插入的值
+ : let i=1 | g/^/s//\=i.' '/ | let i=i+1
+ #+end_src
+
+** 宏和Ctrl-A
+
+ 可以在数字上按ctrl-A来让数字加一， Ctrl-X让数字减一
+
+ 过程如下：
+
+ #+begin_src
+     手工添加第一行的序号和空格
+     输入0"ayw将序号和空格放到寄存器a中
+     移到下一行，执行下面按键
+
+     qz0"aP0^A"ayawjq
+
+     执行4@z来在下面4行执行保存在寄存器z中的命令序列
+
+     qz： 开始录制宏，保存在寄存器z中
+     0: 移到行首
+     “aP: 把寄存器a中的内容(行号和空格)粘贴到这里
+     0^A： 移到行首，按下ctrl-A来使当前光标下的数字加一
+     "ayaw: 把当前光标下的word复制到寄存器a中
+     j：移到下一行
+     q: 录制结束
+ #+end_src
+
+ 如果没有空格做标志，那么就不能用aw来复制一个word，要用v来选择相应数字部分
+
+ 注意：在命令行下， ctrl-a需要用ctrl-v, ctrl-a来表示这个按键
+
+ 在vim下宏比较强大，但一般要写出一个可行的宏需要很多次调试
+
+** 外部命令
+ seq是linux下输出序列的命令
+
+ #+begin_src
+  22@ ~/trunk/go$ seq 5 -2 1
+   5
+   3
+   1
+  22@ ~/$ seq 1 5
+   1
+   2
+   3
+   4
+   5
+  22@ ~/trunk/go$ seq 1 2 5
+   1
+   3
+   5
+ //三个参数的话，中间参数是step，两个参数的话就是开始数字和结束数字，step为1
+ #+end_src
+
+
+ #+begin_src
+ //在文件中插入数字序列， 然后用列模式拷贝使用
+ //:r 意思是read，可以获取文件，或者shell命令输出的内容，并插入到当前光标位置
+ :r !seq 1 5
+ #+end_src
+
+** 使用printf
+ 直接插入行号
+
+ #+begin_src
+ // "-" 是左对齐，默认右对齐
+ :%s/^/\=printf('%-4d', line('.'))
+
+ 在指定行插入序列
+ 首先中V来选择要插入序号的块
+ :'<,'>s/^/\=printf("%-4d. ", line(".")-line("'<")+1)
+
+ 只在非空行插入序列
+ 将下面func放入到.vimrc里
+
+ function Inc(...)
+  let result = g:i
+  let g:i += a:0 > 0 ? a:1 : 1
+  return result
+ endfunction
+
+ a:0相当于argc, a:1相当于argv[1]
+ g:i是全局变量i
+ 然后选中相应块
+ :let i = 1
+ :'<,'>g/^\S/s/^/\=printf("%4d. ", Inc())
+ #+end_src
+ 
+** range和print
+ 下面三条命令都是在指定行下面插入序列
+ #+begin_src
+ //第一条命令和第二条等价
+ //12表示行， put命令: put the test after the cursor
+ :12put = range(1,5)
+ :call append(12, range(1,5))
+ //0put的话，就在第一行前
+ :0put = range(3,7)
+ // range和print相结合可以输出格式化的结果
+ :0put = map(range(1,5), 'printf(''%04d'', v:val)')
+ //v:val代表前面列表中取出的值
+ #+end_src
+
+ 直接使用for更清晰易懂些
+
+ #+begin_src
+ :for i in range(1,10) | put = '192.168.0.'.i | endfor
+ #+end_src
+
+ 特定字符后加序列号
+
+ #+begin_src
+ :let i=1|g/abc/s//\='abc_'.i/ | let i= i+1
+ #+end_src
+
+ 但上面命令有个问题，如果一行有多个abc， 那么都替换成一样的数字，而不会递增
+
+ [[./_images_vim-tips.org/20230429201742.png]]
+
+ 要解决上面的问题可以使用寄存器
+
+ #+begin_src
+ //@a=1,表示设置寄存器a的值为1,
+ //@a表示获取寄存器a中的值，
+ //setreg('a',@a+1), 更新寄存器a中的值，
+ // setreg()返回值为0，所以利用上面的方法来调用setreg来更新寄存器a的值
+ :let @a=1 | %s/abc/\='abc_'.(@a+setreg('a',@a+1))/g
+ #+end_src
+ * %s/abc/\='abc_'.(@a+setreg('a',@a+1))/g * 表示每次匹配都更新寄存器a中的值
+
+ [[./_images_vim-tips.org/20230429202212.png]]
+ 
+** vim8+的ctrl-a
+
+ vim8+对Ctrl-A提供了新功能
+ #+begin_src
+ a[0] = 0;
+ a[1] = 0;
+ a[2] = 0;
+ a[3] = 0;
+ #+end_src
+
+ #+begin_src
+ //用ctrl-V列选中0-0， 然后按g Ctrl-A,
+ //列选中前面的0-6， 然后也按g Ctrl-A
+
+ //结果是
+
+ my_array[2] = 1;
+ my_array[4] = 2;
+ my_array[6] = 3;
+ my_array[8] = 4;
+
+ g Ctrl-A的原理是在第一数字上加1， 第二个数字上加2， 第三个数字上加3...
+ #+end_src
