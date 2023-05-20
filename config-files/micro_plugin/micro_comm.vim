@@ -12,19 +12,20 @@ set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
 		  \,sm:block-blinkwait175-blinkoff150-blinkon175
 
 " 状态行显示的内容（包括文件类型和解码）
-"set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]    "显示文件名: 总行数, 总的字符数
 function! InsertStatuslineColor(mode)
   if a:mode == 'i'
-    hi StatusLine cterm=NONE ctermbg=Green ctermfg=White
+    hi StatusLine cterm=NONE ctermbg=Black ctermfg=Gray
+    hi StatusLine guibg=Black guifg=Gray
   elseif a:mode == 'n'
-    hi StatusLine cterm=NONE ctermbg=Red ctermfg=White
+    hi StatusLine cterm=NONE ctermbg=Black ctermfg=White
+    hi StatusLine guibg=Black guifg=Gold
   endif
 endfunction
 
 autocmd InsertEnter * call InsertStatuslineColor('i')
 autocmd InsertLeave * call InsertStatuslineColor('n')
-
 set statusline=%{mode()}\ %F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l/%L,\ col\ %c)
+"set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]    "显示文件名: 总行数, 总的字符数
 
 set ruler
 set magic
