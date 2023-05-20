@@ -10,8 +10,22 @@ set gcr=a:blinkon0 "取消光标闪烁
 set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
 		  \,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor
 		  \,sm:block-blinkwait175-blinkoff150-blinkon175
-" 我的状态行显示的内容（包括文件类型和解码）
-set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]    "显示文件名: 总行数, 总的字符数
+
+" 状态行显示的内容（包括文件类型和解码）
+"set statusline=[%F]%y%r%m%*%=[Line:%l/%L,Column:%c][%p%%]    "显示文件名: 总行数, 总的字符数
+function! InsertStatuslineColor(mode)
+  if a:mode == 'i'
+    hi StatusLine cterm=NONE ctermbg=Green ctermfg=White
+  elseif a:mode == 'n'
+    hi StatusLine cterm=NONE ctermbg=Red ctermfg=White
+  endif
+endfunction
+
+autocmd InsertEnter * call InsertStatuslineColor('i')
+autocmd InsertLeave * call InsertStatuslineColor('n')
+
+set statusline=%{mode()}\ %F%m%r%h%w%=(%{&ff}/%Y)\ (line\ %l/%L,\ col\ %c)
+
 set ruler
 set magic
 "colorscheme night"设置主题 
