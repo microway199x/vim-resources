@@ -15,7 +15,8 @@ set guicursor=n-v-c:block,i-ci-ve:ver25,r-cr:hor20,o:hor50
 function! InsertStatuslineColor(mode)
   if a:mode == 'i'
     hi StatusLine cterm=NONE ctermbg=Black ctermfg=Gray
-    hi StatusLine guibg=Black guifg=Gold
+   "hi StatusLine guibg=Black guifg=Gold
+    hi StatusLine guibg=Black guifg='#ebdbb2'
   elseif a:mode == 'n'
     hi StatusLine cterm=NONE ctermbg=Black ctermfg=White
     hi StatusLine guibg=Black guifg=lightGreen
