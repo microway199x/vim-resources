@@ -61,6 +61,13 @@ compile:make
     MAC0 20 speed
     MAC0 20 speed
   #+end_src
+** VIM顺序执行多个命令的方法
+   #+begin_src
+     ;;方法
+     :g command-1;commang-2;commang-3
+     ;;例子,先搜索到对应行，再替换
+     :g /hello;s/hello/word/;
+   #+end_src
 * 正则表达式,匹配重复字符串
 ** 用正则匹配字符串中重复的字符或符号，不限制重复的次数：
  #+begin_src
@@ -444,3 +451,11 @@ compile:make
 
  g Ctrl-A的原理是在第一数字上加1， 第二个数字上加2， 第三个数字上加3...
  #+end_src
+
+* Linux:执行linux命令，并获取命令返回结果
+ #+begin_src
+   /// 使用使用反引号包裹命令： `command`, 
+   ///example,获取当前目录
+   set path = `pwd`
+ #+end_src
+ 
