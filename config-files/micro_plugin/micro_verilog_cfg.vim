@@ -65,9 +65,9 @@ function V_align_inst_line()
         let line_str  = getline(i)
         if (line_str =~ '^\s*\..*')
             "参考函数：match matchlist subtitute
-           "let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
-           "for verilog-mode use regexp compare
-            let line_comp = matchlist(line_str,'\.\s*\(\S\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
+          ""let line_comp = matchlist(line_str,'\(\w\+\).*(\(.*\))\(.*\)')
+           "let line_comp = matchlist(line_str,'\(\w\+\).*(\(\S*\{-}\))\(.*\)')
+            let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
            "echo line_comp
             let inst_name = get(line_comp, 1)
             let con_name  = get(line_comp, 2)
@@ -113,9 +113,9 @@ function V_align_inst_line()
         let line_str  = getline(i)
         if (line_str =~ '^\s*\..*')
             "参考函数：match matchlist subtitute
-           "let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
-           "for verilog-mode use regexp compare
-            let line_comp = matchlist(line_str,'\.\s*\(\S\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
+          ""let line_comp = matchlist(line_str,'\(\w\+\).*(\(.*\))\(.*\)')
+           "let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w*\S*\)\s*)\s*\(\S*.*\)')
+            let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
            "echo line_comp
             let inst_name = get(line_comp, 1)
             let con_name  = get(line_comp, 2)
@@ -973,6 +973,178 @@ function V_get_ports(line_begin,line_end)
     return name_list_out
 endfunction
 
+
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+"get module output port
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+function V_get_output_ports()
+    exec "normal gg"
+    /^\s*module
+    let line_begin = line(".")
+    /^\s*);
+    let line_end = line(".")
+    echo line_begin
+    echo line_end
+
+    let name_list = []
+    for i in range(line_begin, line_end)
+        let line_str  = getline(i)
+        if (line_str =~ '^\s*\(input\|output\).*')
+            "参考函数：match matchlist subtitute
+            let line_comp = matchlist(line_str,'\(input\|output\)\s*\(reg\|wire\|\)\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
+            "echo line_comp
+            let io     = get(line_comp, 1)
+            let regw   = get(line_comp, 2)
+            let signed = get(line_comp, 3)
+            let width  = get(line_comp, 4)
+            let name   = get(line_comp, 5)
+            let comma  = get(line_comp, 6)
+            let other  = get(line_comp, 7)
+                
+            if(io == "output") 
+                echo name 
+                let name_list = add(name_list,name)
+                "echo name_list
+             endif
+        endif
+    endfor
+
+    return name_list
+endfunction
+
+
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+"function use for module define wire/reg
+"all use unsigned variable
+"uw: unsigned wire
+"ur: unsigned reg
+" ///{user-define-variable-begin
+"    ... user define variable ...
+" ///}user-define-variable-end
+" 
+" ///{auto-define-variable-begin
+"    ... auto define variable ...
+" ///}auto-define-variable-end
+"
+" assign xxx = yyy; ///{uw99}
+" assign xxx = yyy; ///{uw<parameter>}
+" assign xxx = yyy; ///user-deine-variable
+" always ...
+"  xxx = yyy; ///{ur99}
+"  xxx = yyy; ///{ur<parameter>}
+" always @(posedge ...
+"  xxx <= yyy; ///{ur99}
+"  xxx <= yyy; ///{ur<parameter>}
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+nmap <Leader>vd :call V_module_variable_def()<CR>
+
+function V_module_variable_def()
+    let module_output_port_list = []
+    let module_output_port_list = V_get_output_ports()
+    exec "normal gg"
+    let line_begin = line(".")
+    exec "normal G"
+    let line_end = line(".")
+    echo line_begin
+    echo line_end
+    let name_s = ""
+    let v_type = ""
+    let name_list = []
+    " get all variable define information
+    for i in range(line_begin, line_end)
+        let line_str = getline(i)
+        if(line_str =~ '^\s*assign.*=.*{uw\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uw\(\d\+\)}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = "wire"
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >0 in list
+            " if (index(module_output_port_list, name_s) == -1)
+            if (index(module_output_port_list, name_s) > 0)
+                echo name_s . ":: is output port"
+            else 
+                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
+                let name_list = add(name_list,name_s)
+            endif
+        elseif(line_str =~ '^\s*assign.*=.*{uw<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uw<\(.*\)>}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = "wire"
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >0 in list
+            if (index(module_output_port_list, name_s) > 0)
+                echo name_s . ":: is output port"
+            else 
+                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
+                let name_list = add(name_list,name_s)
+            endif
+        elseif(line_str =~ '^\s*\w*.*=.*{ur\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{ur\(\d\+\)}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >0 in list
+            if (index(module_output_port_list, name_s) > 0)
+                echo name_s . ":: is output port"
+            else 
+                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
+                let name_list = add(name_list,name_s)
+            endif
+        elseif(line_str =~ '^\s*\w*.*=.*{ur<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{ur<\(.*\)>}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >0 in list
+            if (index(module_output_port_list, name_s) > 0)
+                echo name_s . ":: is output port"
+            else 
+                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
+                let name_list = add(name_list,name_s)
+            endif
+        endif 
+    endfor
+
+    "generate or refresh variable define
+    /^\s*\/\/\/{.*auto.*variable.*define.*begin
+    let line_def_begin = line(".")
+    let line_def_begin_add1 = line_def_begin + 1
+    /^\s*\/\/\/}.*auto.*variable.*define.*end
+    let line_def_end = line(".")
+    exec ":" . line_def_begin_add1 . "," . line_def_end . "d"
+    call append(line_def_begin, "\/\/\/}auto-variable-define-end")
+    call append(line_def_begin, name_list)
+
+endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" Veriolg chk reset match 

@@ -56,12 +56,12 @@ set laststatus=2            "总是显示状态行
 set autoread                "文件在Vim之外修改过，自动重新读入
 syntax enable
 syntax on
-set ai                      "自动缩进
-set autoindent              " 自动缩进对齐
-set smartindent
-set autochdir               "自动设置当前目录为正在编辑的目录
-set backspace=2             "设置退格键可用
-set clipboard+=unnamed      " 与windows共享剪贴板
+set ai                          "自动缩进
+set autoindent                  " 自动缩进对齐
+"set smartindent "not suppport for verilog, use autoindent
+set autochdir                   "自动设置当前目录为正在编辑的目录
+set backspace=2                 "设置退格键可用
+set clipboard+=unnamed          " 与windows共享剪贴板
 if(g:iswindows)
     set guifont=Consolas:h12    " windows设置方式，字体与字体大小之间为:
 else
