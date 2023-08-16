@@ -1012,19 +1012,89 @@ function V_get_output_ports()
     return name_list
 endfunction
 
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+"get module input port
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+function V_get_input_ports()
+    exec "normal gg"
+    /^\s*module
+    let line_begin = line(".")
+    /^\s*);
+    let line_end = line(".")
+    echo line_begin
+    echo line_end
+
+    let name_list = []
+    for i in range(line_begin, line_end)
+        let line_str  = getline(i)
+        if (line_str =~ '^\s*\(input\|output\).*')
+            "参考函数：match matchlist subtitute
+            let line_comp = matchlist(line_str,'\(input\|output\)\s*\(reg\|wire\|\)\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
+            "echo line_comp
+            let io     = get(line_comp, 1)
+            let regw   = get(line_comp, 2)
+            let signed = get(line_comp, 3)
+            let width  = get(line_comp, 4)
+            let name   = get(line_comp, 5)
+            let comma  = get(line_comp, 6)
+            let other  = get(line_comp, 7)
+                
+            if(io == "input") 
+                echo name 
+                let name_list = add(name_list,name)
+                "echo name_list
+             endif
+        endif
+    endfor
+
+    return name_list
+endfunction
+
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+"get module variable def(reg/wire)
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+function V_get_variable_def(line_begin,line_end)
+
+    let line_begin = str2nr(a:line_begin)
+    let line_end = str2nr(a:line_end)
+
+    let name_list = []
+    for i in range(line_begin, line_end)
+        let line_str  = getline(i)
+            "参考函数：match matchlist subtitute
+        if (line_str =~ '^\s*\(reg\|wire\).*')
+                let line_comp = matchlist(line_str,'\s*\(reg\|wire\)\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w\+\)\W*.*\s*\(;\)\s*\(\S.*\|\)\s*$')
+               "echo line_comp
+                let io      = ""
+                let regw    = get(line_comp, 1)
+                let signed  = get(line_comp, 2)
+                let width   = get(line_comp, 3)
+                let name    = get(line_comp, 4)
+                let comma   = get(line_comp, 5)
+                let other   = get(line_comp, 6)
+                echo name 
+                let name_list = add(name_list,name)
+        endif
+    endfor
+    return name_list
+endfunction
 
 "'''''''''''''''''''''''''''''''''''''''''''''''''''''''
 "function use for module define wire/reg
 "all use unsigned variable
 "uw: unsigned wire
 "ur: unsigned reg
-" ///{user-define-variable-begin
+" ///{auto-port-define-begin
+"     ...port...
+" ///}user-port-define-begin
+"
+" ///{user-variable-define-end
 "    ... user define variable ...
-" ///}user-define-variable-end
+" ///}user-variable-define-end
 " 
-" ///{auto-define-variable-begin
+" ///{auto-variable-define-begin
 "    ... auto define variable ...
-" ///}auto-define-variable-end
+" ///}auto-variable-define-end
 "
 " assign xxx = yyy; ///{uw99}
 " assign xxx = yyy; ///{uw<parameter>}
@@ -1032,16 +1102,57 @@ endfunction
 " always ...
 "  xxx = yyy; ///{ur99}
 "  xxx = yyy; ///{ur<parameter>}
+"  xxx = yyy; ///{uro99}
+"  xxx = yyy; ///{uro<parameter>}
 " always @(posedge ...
 "  xxx <= yyy; ///{ur99}
 "  xxx <= yyy; ///{ur<parameter>}
-"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+"  .a (xxxx), ///{uwi99}
+"  .a (xxxx), ///{uwi<parameter>}
+"  .a (xxxx), ///{uwo99}
+"  .a (xxxx), ///{uwo<parameter>}
+"
+"  for more compilcate expression shall do user define "  ......   ///{user-define:option-width-info} "'''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 nmap <Leader>vd :call V_module_variable_def()<CR>
 
 function V_module_variable_def()
+    ""delete auto output list =============================
+    /^\s*\/\/\/{.*auto.*port.*define.*begin
+    let line_def_begin = line(".")
+    let line_def_begin_add1 = line_def_begin + 1
+    /^\s*\/\/\/}.*auto.*port.*define.*end
+    let line_def_end = line(".")
+    exec ":" . line_def_begin_add1 . "," . line_def_end . "d"
+    call append(line_def_begin, "\/\/\/}auto-port-define-end")
+
+    ""delete auto variable list ===========================
+    /^\s*\/\/\/{.*auto.*variable.*define.*begin
+    let line_def_begin = line(".")
+    let line_def_begin_add1 = line_def_begin + 1
+    /^\s*\/\/\/}.*auto.*variable.*define.*end
+    let line_def_end = line(".")
+    exec ":" . line_def_begin_add1 . "," . line_def_end . "d"
+    call append(line_def_begin, "\/\/\/}auto-variable-define-end")
+
+    " get user-define signal list==========================
     let module_output_port_list = []
     let module_output_port_list = V_get_output_ports()
+    let module_input_port_list = []
+    let module_input_port_list = V_get_input_ports()
+
+    /^\s*\/\/\/{.*user.*variable.*define.*begin
+    let line_begin = line(".")
+    /^\s*\/\/\/}.*user.*variable.*define.*end
+    let line_end = line(".")
+    let module_user_def_var = []
+    let module_user_def_var = V_get_variable_def(line_begin, line_end)
+
+    echo module_input_port_list
+    echo module_output_port_list
+    echo module_user_def_var
+
+    ""signal generate =====================================
     exec "normal gg"
     let line_begin = line(".")
     exec "normal G"
@@ -1051,9 +1162,12 @@ function V_module_variable_def()
     let name_s = ""
     let v_type = ""
     let name_list = []
+    let name_list_output_port = []
+    let name_list_input_port = []
     " get all variable define information
     for i in range(line_begin, line_end)
         let line_str = getline(i)
+        ""assign express 1==========================================
         if(line_str =~ '^\s*assign.*=.*{uw\d\+}.*')
             let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uw\(\d\+\)}.*')
             let name_s = get(line_comp,1)
@@ -1069,14 +1183,15 @@ function V_module_variable_def()
             endif
 
             " check if variable is output or not 
-            " if index(xxx) = -1, mean not in list, if >0 in list
+            " if index(xxx) = -1, mean not in list, if >=0 in list
             " if (index(module_output_port_list, name_s) == -1)
-            if (index(module_output_port_list, name_s) > 0)
-                echo name_s . ":: is output port"
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
             else 
-                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
-                let name_list = add(name_list,name_s)
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
             endif
+        ""assign express 2: parameter ==============================
         elseif(line_str =~ '^\s*assign.*=.*{uw<.*>}.*')
             let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uw<\(.*\)>}.*')
             let name_s = get(line_comp,1)
@@ -1086,13 +1201,55 @@ function V_module_variable_def()
             let width_str = printf("[%5s -1:0]",width)
 
             " check if variable is output or not 
-            " if index(xxx) = -1, mean not in list, if >0 in list
-            if (index(module_output_port_list, name_s) > 0)
-                echo name_s . ":: is output port"
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
             else 
-                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
-                let name_list = add(name_list,name_s)
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
             endif
+        ""assign express 3: output    ==============================
+        elseif(line_str =~ '^\s*assign.*=.*{uwo\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uwo\(\d\+\)}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = ""
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            " if (index(module_output_port_list, name_s) == -1)
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is already output port"
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
+            endif
+        ""assign express 3: output with parameter ==================
+        elseif(line_str =~ '^\s*assign.*=.*{uwo<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uwo<\(.*\)>}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = "wire"
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is alreasy output port"
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
+            endif
+        ""always express 1: ========================================
         elseif(line_str =~ '^\s*\w*.*=.*{ur\d\+}.*')
             let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{ur\(\d\+\)}.*')
             let name_s = get(line_comp,1)
@@ -1108,13 +1265,14 @@ function V_module_variable_def()
             endif
 
             " check if variable is output or not 
-            " if index(xxx) = -1, mean not in list, if >0 in list
-            if (index(module_output_port_list, name_s) > 0)
-                echo name_s . ":: is output port"
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
             else 
-                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
-                let name_list = add(name_list,name_s)
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
             endif
+        ""always express 2: parameter ==============================
         elseif(line_str =~ '^\s*\w*.*=.*{ur<.*>}.*')
             let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{ur<\(.*\)>}.*')
             let name_s = get(line_comp,1)
@@ -1124,26 +1282,196 @@ function V_module_variable_def()
             let width_str = printf("[%5s -1:0]",width)
 
             " check if variable is output or not 
-            " if index(xxx) = -1, mean not in list, if >0 in list
-            if (index(module_output_port_list, name_s) > 0)
-                echo name_s . ":: is output port"
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
             else 
-                let name_s = printf('%-5s %-20s %-40s;',v_type, width_str, name_s)
-                let name_list = add(name_list,name_s)
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
+            endif
+        ""always express 3: output =================================
+        elseif(line_str =~ '^\s*\w*.*=.*{uro\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{uro\(\d\+\)}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is already output port"
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
+            endif
+
+        ""always express 4: output with parameter ==================
+        elseif(line_str =~ '^\s*\w*.*=.*{uro<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{uro<\(.*\)>}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is already output port"
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
+            endif
+        ""module instance for connect: from input port ================
+        ""if not from input, must be define from always or assign
+        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwi\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwi\(\d\+\)}.*$')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = ""
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_input_port_list, name_s) >= 0)
+                echo name_s . ":: is already input port"
+            else 
+                let name_s = printf('input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_input_port,name_s)
+            endif
+
+        ""module instance for connect: from input port, with parameter =======
+        ""if not from input, must be define from always or assign
+        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwi<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwi<\(.*\)>}.*$')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = ""
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_input_port_list, name_s) >= 0)
+                echo name_s . ":: is already input port"
+            else 
+                let name_s = printf('input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_input_port,name_s)
+            endif
+
+        ""module instance for connect 1: variable define =====================
+        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uw\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uw\(\d\+\)}.*$')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = "wire"
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
+            else 
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
+            endif
+
+        ""module instance for connect 2: variable define with parameter ======
+        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uw<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uw<\(.*\)>}.*$')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = "wire"
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
+            else 
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
+            endif
+        ""module instance for connect 3: variable define =====================
+        ""if not from input, must be define from always or assign
+        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwo\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwo\(\d\+\)}.*$')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = ""
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is already output port"
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
+            endif
+
+        ""module instance for connect 4: variable define with parameter ======
+        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwo<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwo<\(.*\)>}.*$')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,2)
+            let v_type = ""
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is already output port "
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
             endif
         endif 
     endfor
 
+    "echo name_list
+    "echo name_list_input_port
+    "echo name_list_output_port
     "generate or refresh variable define
+    /^\s*\/\/\/{.*auto.*port.*define.*begin
+    let line_def_begin = line(".")
+    call append(line_def_begin, name_list_output_port)
+    call append(line_def_begin, name_list_input_port)
+
     /^\s*\/\/\/{.*auto.*variable.*define.*begin
     let line_def_begin = line(".")
-    let line_def_begin_add1 = line_def_begin + 1
-    /^\s*\/\/\/}.*auto.*variable.*define.*end
-    let line_def_end = line(".")
-    exec ":" . line_def_begin_add1 . "," . line_def_end . "d"
-    call append(line_def_begin, "\/\/\/}auto-variable-define-end")
     call append(line_def_begin, name_list)
-
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
