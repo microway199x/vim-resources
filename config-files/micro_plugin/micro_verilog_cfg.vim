@@ -26,7 +26,7 @@ function V_sv_compile(...)
 endfunction
 "" when write buffer, do make automatic,
 " autocmd BufWritePost *.v exec ":make" 
-autocmd BufRead BufNew BufNewFile *.v *.sv exec ":call V_sv_compile()"
+"autocmd BufRead BufNew BufNewFile *.v, *.sv exec ":call V_sv_compile()"
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""

@@ -452,6 +452,72 @@ compile:make
  g Ctrl-A的原理是在第一数字上加1， 第二个数字上加2， 第三个数字上加3...
  #+end_src
 
+
+
+ 
+* VIM 替换多个文件操作：（替换为例）
+实际上只要如下两个命令即可（假设要将当前目录下所有扩展名为.txt/.cpp的文件中的
+hate替换成love）:
+#+begin_src
+:args *.txt *.cpp
+:argdo %s/hate/love/gc | update
+#+end_src
+
+就可以完成啦。解释如下，
+
+#+begin_src
+:args *.txt *.cpp
+#+end_src
+
+这样写会扫描当前目录下的.txt 和 .cpp文件，并加入到参数列表。但是这样写只会扫描当
+前目录，如果想要递归扫描所有下级目录的话，用
+
+#+begin_src
+:args **/*.txt
+#+end_src
+
+如果只想扫描下一级目录（即不扫描当前目录）的话，用
+#+begin_src
+:args */*.txt
+#+end_src
+而
+
+#+begin_src
+:argdo %s/hate/love/gc | update
+#+end_src
+
+是将参数列表中的所有文件的hate提换成love，并写入硬盘（如果没有|update，就不会写
+入，但相应的替换也会被中断）。
+其中gc g为全局替换， c表示每次替换需要确认；
+
+
+* VIM 指定条件替换
+  1. 指定行范围内替换
+    #+begin_src
+      :10,100s/old_str/new_str/gc
+      //替换10到100行
+    #+end_src
+
+  2. 通过匹配指定范围: 可以将特定字符做为替换范围。比如，将SQL语句从FROM至分号部
+     分中的所有等号（=）替换为不等号（<>）：
+    #+begin_src
+       :/FROM/,/;/s/=/<>/g
+    #+end_src
+  3. 如何只替换符合某种条件的行？
+
+     如果你的条件可以用正则表达式表达，则可以结合:g命令来使用。:g表示全局替换。
+     比如，如果你想在所有出现bar的行进行替换，则可以在normal mode输入：
+    #+begin_src
+      :%g/bar/s/\(foo([^)]*\))/\1, NULL)/g
+    #+end_src
+
+    在所有不出现bar的行进行替换，则可以在normal mode输入：
+    #+begin_src
+        :%g!/bar/s/\(foo([^)]*\))/\1, NULL)/g
+    #+end_src
+
+    想了解更多，在normal mode输入： :h :g
+
 * Linux:执行linux命令，并获取命令返回结果
  #+begin_src
    /// 使用使用反引号包裹命令： `command`, 
