@@ -67,7 +67,7 @@ function V_align_inst_line()
             "参考函数：match matchlist subtitute
           ""let line_comp = matchlist(line_str,'\(\w\+\).*(\(.*\))\(.*\)')
            "let line_comp = matchlist(line_str,'\(\w\+\).*(\(\S*\{-}\))\(.*\)')
-            let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
+            let line_comp = matchlist(line_str,'^\s*\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)$')
            "echo line_comp
             let inst_name = get(line_comp, 1)
             let con_name  = get(line_comp, 2)
@@ -79,14 +79,15 @@ function V_align_inst_line()
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
-                let con_name_vec = matchlist(con_name,'\(\S\S*\)\s*') 
+                let con_name_vec = matchlist(con_name,'\(\w\|\S.*\S\)\s*') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = ""
             endif
+            
+            let con_name = con_name . " " . con_vec
 
             let len_inst     = strlen(inst_name)
             let len_con      = strlen(con_name)
-            let len_con_vec  = strlen(con_vec)
 
 
             if(len_inst > max_inst)
@@ -96,18 +97,28 @@ function V_align_inst_line()
                 let max_con = len_con
             endif
 
-            if(len_con_vec > max_con_vec)
-                let max_con_vec = len_con_vec
-            endif
             
-            if(len_inst > 30)
+            if(len_inst > 40)
                 echom (inst_name . "variable name too long")
             endif
-            if(len_con > 30)
+            if(len_con > 40)
                 echom (con_name . "variable name too long")
             endif
         endif
     endfor
+
+    ""can use string as format, string can dynamic generate
+    if(max_inst > 60) 
+        let max_inst = 60
+    endif
+    let max_inst = max_inst + 4
+    let inst_name_format = "%-" . max_inst . "s"
+
+    if(max_con > 60) 
+        let max_con = 60
+    endif
+    let max_con = max_con + 4
+    let con_name_format = "%-" . max_con . "s"
 
     for i in range(line_begin, line_end)
         let line_str  = getline(i)
@@ -115,7 +126,7 @@ function V_align_inst_line()
             "参考函数：match matchlist subtitute
           ""let line_comp = matchlist(line_str,'\(\w\+\).*(\(.*\))\(.*\)')
            "let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w*\S*\)\s*)\s*\(\S*.*\)')
-            let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)')
+            let line_comp = matchlist(line_str,'^\s*\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)$')
            "echo line_comp
             let inst_name = get(line_comp, 1)
             let con_name  = get(line_comp, 2)
@@ -127,46 +138,19 @@ function V_align_inst_line()
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
-                let con_name_vec = matchlist(con_name,'\(\S\S*\)\s*') 
+                let con_name_vec = matchlist(con_name,'\(\w\|\S.*\S\)\s*') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = ""
             endif
 
-            if(max_inst < 10)
-                let inst_name = printf('%-10s', inst_name)
-            elseif(max_inst < 20)
-                let inst_name = printf('%-20s', inst_name)
-            elseif(max_inst < 30)
-                let inst_name = printf('%-30s', inst_name)
-            else
-                let inst_name = printf('%-40s', inst_name)
-            endif
+            let con_name     = con_name . " " . con_vec
+            let con_name = printf(con_name_format, con_name)
 
-            if(max_con < 10)
-                let con_name = printf('%-10s', con_name)
-            elseif(max_con < 20)
-                let con_name = printf('%-20s', con_name)
-            elseif(max_con < 25)
-                let con_name = printf('%-30s', con_name)
-            else
-                let con_name = printf('%-40s', con_name)
-            endif
-
-            if(max_con_vec < 10)
-                let con_vec = printf('%-10s', con_vec)
-            elseif(max_con_vec < 20)
-                let con_vec = printf('%-20s', con_vec)
-            elseif(max_con_vec < 25)
-                let con_vec = printf('%-30s', con_vec)
-            else
-                let con_vec = printf('%-40s', con_vec)
-            endif
-
-
+            let inst_name = printf(inst_name_format, inst_name)
 
            "echo max_inst . "  " . max_con
 
-            let line_out  = printf('    .%-s(%-s%-s)%-2s%s', inst_name, con_name,con_vec, comma, other)
+            let line_out  = printf('    .%-s(%-s% )%-2s%s', inst_name, con_name,comma, other)
             call setline(i, line_out)
         endif
     endfor
@@ -191,8 +175,8 @@ function V_align_io()
             "参考函数：match matchlist subtitute
             if (line_str =~ '^\s*\(input\|output\).*')
                 "let line_comp = matchlist(line_str,'\(input\|output\)\s*\(reg\|wire\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
-                 let line_comp = matchlist(line_str,'\(input\|output\)\s*\(reg\|wire\|\)\s*\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
-               "echo line_comp
+                 let line_comp = matchlist(line_str,'\s*\(input\|output\)\s*\(reg\|wire\|\)\s*\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
+                "echo line_comp
                 let io      = get(line_comp, 1)
                 let regw    = get(line_comp, 2)
                 let signed  = get(line_comp, 3)
@@ -224,19 +208,15 @@ function V_align_io()
                 let vec      = ""
             endif
 
+            let name = name . " " . vec
             
             let len_name = strlen(name)
-            let len_vec  = strlen(vec)
 
             if(len_name > max_len)
                 let max_len = len_name
             endif
 
-            if(len_vec > max_vec)
-                let max_vec = len_vec
-            endif
-
-            if(len_name > 30)
+            if(len_name > 40)
                 echom(name . "variable name too long")
             endif
 
@@ -271,7 +251,23 @@ function V_align_io()
         endif
     endfor
 
+
+
     if(is_para == 1) 
+        if(max_len > 60) 
+            let max_len = 60
+        endif 
+
+        let max_len = max_len + 4
+        let para_format = "%-" . max_len . "s"
+
+        if(max_wid > 60) 
+            let max_wid = 60
+        endif 
+
+        let max_wid = max_wid + 4
+        let para_val_format = "%-" . max_wid . "s"
+
         for i in range(line_begin, line_end)
             let line_str  = getline(i)
             if (line_str =~ '^\s*parameter.*')
@@ -284,39 +280,39 @@ function V_align_io()
                     let para_val   = get(para_val_list, 1)
             endif
 
-            if(max_len < 10)
-                let para = printf('%-10s', para)
-            elseif(max_len < 20)
-                let para = printf('%-20s', para)
-            elseif(max_len < 30)
-                let para = printf('%-30s', para)
-            else
-                let para = printf('%-40s', para)
-            endif
+            let para = printf(para_format , para)
 
-             if(max_wid < 10)
-                 let para_val = printf('%-10s', para_val)
-             elseif(max_wid < 20)
-                 let para_val = printf('%-20s', para_val)
-             elseif(max_wid < 25)
-                 let para_val = printf('%-25s', para_val)
-             else
-                 let para_val = printf('%-30s', para_val)
-             endif
+            let para_val = printf(para_val_format, para_val)
             "echo line_comp
             let line_out  = printf('    parameter %s = %s %1s %-s', para,para_val,comma, other)
             "echo line_out
             call setline(i, line_out)
         endfor
-    else
+    else   
+    "if not paramenter , input /output 
+
+        if(max_len > 60) 
+            let max_len = 60
+        endif 
+
+        let max_len = max_len + 4
+        let name_format = "%-" . max_len . "s"
+
+        if(max_wid > 60) 
+            let max_wid = 60
+        endif 
+
+        let max_wid = max_wid + 4
+        let width_format = "%-" . max_wid . "s"
+
         for i in range(line_begin, line_end)
             let line_str  = getline(i)
             if (line_str =~ '^\s*\(input\|inout\|output\|reg\|wire\).*')
                 "参考函数：match matchlist subtitute
                 if (line_str =~ '^\s*\(input\|output\).*')
                     "let line_comp = matchlist(line_str,'\(input\|output\)\s*\(reg\|wire\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
-                     let line_comp = matchlist(line_str,'\(input\|output\)\s*\(reg\|wire\|\)\s*\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
-                   "echo line_comp
+                     let line_comp = matchlist(line_str,'\s*\(input\|output\)\s*\(reg\|wire\|\)\s*\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
+                    "echo line_comp
                     let io      = get(line_comp, 1)
                     let regw    = get(line_comp, 2)
                     let signed  = get(line_comp, 3)
@@ -347,46 +343,20 @@ function V_align_io()
                     let name     = get(name_vec,1)
                     let vec      = ""
                 endif
+                
+                let name = name . " " . vec
+                
+                let name = printf(name_format, name)
 
-
-                "echo max_len
-                if(max_len < 10)
-                    let name = printf('%-10s', name)
-                elseif(max_len < 20)
-                    let name = printf('%-20s', name)
-                elseif(max_len < 30)
-                    let name = printf('%-30s', name)
-                else
-                    let name = printf('%-40s', name)
-                endif
-
-                if(max_vec < 10)
-                    let vec = printf('%-10s', vec)
-                elseif(max_vec < 20)
-                    let vec = printf('%-20s', vec)
-                elseif(max_vec < 30)
-                    let vec = printf('%-30s', vec)
-                else
-                    let vec = printf('%-40s', vec)
-                endif
-
-                if(max_wid < 10)
-                    let width = printf('%-10s', width)
-                elseif(max_wid < 20)
-                    let width = printf('%-20s', width)
-                elseif(max_wid < 25)
-                    let width = printf('%-25s', width)
-                else
-                    let width = printf('%-30s', width)
-                endif
+                let width = printf(width_format, width)
 
                 if (io == "")
                     let io = ""
                 else
                     let io = printf('    %-8s', io)
                 endif
-                "echo line_comp
-                let line_out_pre  = printf(' %-6s %-6s %-s %-s %s %1s %-s', regw,signed, width, name,vec, comma, other)
+                "echo io
+                let line_out_pre  = printf(' %-6s %-6s %-s %-s %1s %-s', regw,signed, width, name,comma, other)
                 let line_out = io . line_out_pre
                 "echo line_out
                 call setline(i, line_out)
@@ -403,10 +373,10 @@ nmap <Leader>ve :call V_align_eval()<CR>
 function V_align_eval()
     let line_begin = line("'<")
     let line_end   = line("'>")
-    let max_left = 0
-    let max_right = 0
-    let max_vec_left = 0
-    let max_vec_right = 0
+    let max_len_left = 0
+    let max_len_right = 0
+    let max_len_vec_left = 0
+    let max_len_vec_right = 0
     let indent_s     = " "
     let name_left    = " "
     let eq_s         = " "
@@ -450,22 +420,22 @@ function V_align_eval()
                 let assign_s     = ""
             endif
 
-            if(name_left =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
+            if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
                 let name_left_vec = matchlist(name_left,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = get(name_left_vec,2)
             else 
-                let name_left_vec = matchlist(name_left,'\(\S\S*\)\s*') 
+                let name_left_vec = matchlist(name_left,'\(\w\|\S.*\S\)\s*') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = ""
             endif
 
-            if(name_right =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
+            if(name_right =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
                 let name_right_vec  = matchlist(name_right,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
                 let name_right      = get(name_right_vec,1)
                 let vec_right       = get(name_right_vec,2)
             else 
-                let name_right_vec = matchlist(name_right,'\(\S\S*\)\s*') 
+                let name_right_vec = matchlist(name_right,'\(\w\|\S.*\S\)\s*') 
                 let name_right     = get(name_right_vec,1)
                 let vec_right      = ""
             endif
@@ -476,30 +446,52 @@ function V_align_eval()
             let len_vec_left  = strlen(vec_left)
             let len_vec_right = strlen(vec_right)
 
-            if(len_left > max_left)
-                let max_left = len_left
+            if(len_left > max_len_left)
+                let max_len_left = len_left
             endif
-            if(len_right > max_right)
-                let max_right = len_right
-            endif
-
-            if(len_vec_left > max_vec_left)
-                let max_vec_left = len_vec_left
+            if(len_right > max_len_right)
+                let max_len_right = len_right
             endif
 
-            if(len_vec_right > max_vec_right)
-                let max_vec_right = len_vec_right
+            if(len_vec_left > max_len_vec_left)
+                let max_len_vec_left = len_vec_left
             endif
 
-            if(len_left > 30)
+            if(len_vec_right > max_len_vec_right)
+                let max_len_vec_right = len_vec_right
+            endif
+
+            if(len_left > 40)
                 echom(name_left . "variable name too long")
             endif
 
-            if(len_right > 30)
+            if(len_right > 40)
                 echom(name_right . "variable name too long")
             endif
         endif
     endfor
+
+    if(max_len_left > 60)
+        let max_len_left = 60
+    endif
+
+    let name_left_format = "%-" . max_len_left . "s"
+
+    if(max_len_right > 60)
+        let max_len_right = 60
+    endif
+
+    let name_right_format = "%-" . max_len_right . "s"
+
+    if(max_len_vec_left > 30)
+        let max_len_vec_left = 30
+    endif
+    let name_vec_left_format = "%-" . max_len_vec_left . "s"
+
+    if(max_len_vec_right > 30)
+        let max_len_vec_right = 30
+    endif
+    let name_vec_right_format = "%-" . max_len_vec_right . "s"
 
     for i in range(line_begin, line_end)
         let line_str  = getline(i)
@@ -538,72 +530,41 @@ function V_align_eval()
                 let assign_s     = ""
             endif
 
-            if(name_left =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
+            if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
                 let name_left_vec = matchlist(name_left,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = get(name_left_vec,2)
             else 
-                let name_left_vec = matchlist(name_left,'\(\S\S*\)\s*') 
+                let name_left_vec = matchlist(name_left,'\(\w\|\S.*\S\)\s*') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = ""
             endif
 
-            if(name_right =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
+            if(name_right =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
                 let name_right_vec  = matchlist(name_right,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
                 let name_right      = get(name_right_vec,1)
                 let vec_right       = get(name_right_vec,2)
             else 
-                let name_right_vec = matchlist(name_right,'\(\S\S*\)\s*') 
+                let name_right_vec = matchlist(name_right,'\(\w\|\S.*\S\)\s*') 
                 let name_right     = get(name_right_vec,1)
                 let vec_right      = ""
             endif
 
-            if(max_left < 10)
-                let name_left = printf('%-10s', name_left)
-            elseif(max_left < 20)
-                let name_left = printf('%-20s', name_left)
-            elseif(max_left < 30)
-                let name_left = printf('%-30s', name_left)
-            else
-                let name_left = printf('%-40s', name_left)
-            endif
+            let name_left = printf(name_left_format, name_left)
 
-            if(max_right < 10)
-                let name_right = printf('%-10s', name_right)
-            elseif(max_right < 20)
-                let name_right = printf('%-20s', name_right)
-            elseif(max_right < 25)
-                let name_right = printf('%-30s', name_right)
-            else
-                let name_right = printf('%-40s', name_right)
-            endif
+            let name_right = printf(name_right_format, name_right)
 
-            if(max_vec_left < 10)
-                let vec_left = printf('%-10s', vec_left)
-            elseif(max_vec_left < 20)
-                let vec_left = printf('%-20s', vec_left)
-            elseif(max_vec_left < 30)
-                let vec_left = printf('%-30s', vec_left)
-            else
-                let vec_left = printf('%-40s', vec_left)
-            endif
+            let vec_left = printf(name_vec_left_format, vec_left)
 
-            if(max_vec_right < 10)
-                let vec_right = printf('%-10s', vec_right)
-            elseif(max_vec_right < 20)
-                let vec_right = printf('%-20s', vec_right)
-            elseif(max_vec_right < 25)
-                let vec_right = printf('%-30s', vec_right)
-            else
-                let vec_right = printf('%-40s', vec_right)
-            endif
+            let vec_right = printf(name_vec_right_format, vec_right)
 
             let indent_s  = printf('%s',indent_s)
             let assign_s  = printf('%-s',assign_s)
             let eq_s      = printf('%-2s',eq_s)
             let comment   = printf('%-s',comment)
             "echo line_comp
-            let line_out  = indent_s . assign_s . name_left .vec_left . eq_s . "  " . name_right . vec_right . ";" . comment
+            "let line_out  = indent_s . assign_s . name_left .vec_left . "  " .  eq_s . "  " . name_right . vec_right . "  ;" . comment
+             let line_out  = "    " . assign_s . name_left .vec_left . "  " .  eq_s . "  " . name_right . vec_right . "  ;" . comment
             "echo line_out
             call setline(i, line_out)
         endif
@@ -739,25 +700,11 @@ function V_wavedrom(n_len)
                 endif " end if i_drow
             endfor  
 
-            if(a:n_len < 5)
-                let name_u = printf("%-5s",'')
-                let name_d = printf("%-5s",name)
-            elseif (a:n_len < 10)
-                let name_u = printf("%-10s",'')
-                let name_d = printf("%-10s",name)
-            elseif (a:n_len < 15)
-                let name_u = printf("%-15s",'')
-                let name_d = printf("%-15s",name)
-            elseif (a:n_len < 20)
-                let name_u = printf("%-20s",'')
-                let name_d = printf("%-20s",name)
-            elseif (a:n_len < 25)
-                let name_u = printf("%-25s",'')
-                let name_d = printf("%-25s",name)
-            else
-                let name_u = printf("%-30s",'')
-                let name_d = printf("%-30s",name)
-            endif
+            let name_len = a:n_len + 2
+            let name_format = "%-" . name_len . "s"
+
+            let name_u = printf(name_format,'')
+            let name_d = printf(name_format,name)
 
             let line_u_s = printf("\\\\%-s    %-s",name_u,line_u)
             let line_d_s = printf("\\\\%-s SW:%-s   SD:%-s",name_d,line_d,dot)
@@ -883,19 +830,17 @@ function V_get_para(line_begin,line_end)
 
     let cur_num = 0
     let len_name_list = len(name_list)
+    
+    if(max_len > 60)
+        let max_len = 60
+    endif
+    let max_len = max_len + 4
+
+    let name_s_format = "%-" . max_len ."s"
+
     for item in name_list
         let name_s = item
-            if(max_len < 10)
-                let name_s = printf('%-10s', name_s)
-            elseif(max_len < 20)
-                let name_s = printf('%-20s', name_s)
-            elseif(max_len < 30)
-                let name_s = printf('%-30s', name_s)
-            elseif(max_len < 40)
-                let name_s = printf('%-40s', name_s)
-            else 
-                let name_s = printf('%-50s', name_s)
-            endif
+            let name_s = printf(name_s_format, name_s)
 
             if(cur_num >= len_name_list -1) 
                 "echo line_comp
@@ -951,24 +896,21 @@ function V_get_ports(line_begin,line_end)
         endif
     endfor
 
+    if(max_len > 60)
+        let max_len = 60
+    endif
+    let max_len = max_len + 4
+
+    let name_s_format = "%-" . max_len ."s"
+
     for item in name_list
         let [io_s,name_s] = split(item,",")
-            if(max_len < 10)
-                let name_s = printf('%-10s', name_s)
-            elseif(max_len < 20)
-                let name_s = printf('%-20s', name_s)
-            elseif(max_len < 30)
-                let name_s = printf('%-30s', name_s)
-            elseif(max_len < 40)
-                let name_s = printf('%-40s', name_s)
-            else 
-                let name_s = printf('%-50s', name_s)
-            endif
+        let name_s = printf(name_s_format, name_s)
 
-            "echo line_comp
-            let name_out = "." . name_s . "(" . name_s . ")" . ",//" . io_s 
-            "echo line_out
-            let name_list_out = add(name_list_out,name_out)
+        "echo line_comp
+        let name_out = "." . name_s . "(" . name_s . ")" . ",//" . io_s 
+        "echo line_out
+        let name_list_out = add(name_list_out,name_out)
     endfor
     return name_list_out
 endfunction
