@@ -79,7 +79,7 @@ function V_align_inst_line()
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
-                let con_name_vec = matchlist(con_name,'\(\w\|\S.*\S\)\s*') 
+                let con_name_vec = matchlist(con_name,'^\s*\(\w\|\S.*\S\|\)\s*$') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = ""
             endif
@@ -138,7 +138,7 @@ function V_align_inst_line()
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
-                let con_name_vec = matchlist(con_name,'\(\w\|\S.*\S\)\s*') 
+                let con_name_vec = matchlist(con_name,'^\s*\(\w\|\S.*\S\|\)\s*$') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = ""
             endif
@@ -388,7 +388,7 @@ function V_align_eval()
         if (line_str =~ '^\s*\S\+.*')
             if (line_str =~ '^\s*assign\s\+.*')
           "  "参考函数：match matchlist subtitute
-                let line_comp = matchlist(line_str,'\(\s*\)assign\s\+\(\w\|\S[^;<=]*\S\)\s*\(=\|<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)')
+                let line_comp = matchlist(line_str,'^\(\s*\)assign\s\+\(\w\|\S[^;<=]*\S\)\s*\(=\|<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)$')
                "let line_comp = matchlist(line_str,'^\s*assign\s+\(\w.*\)\s*\(=\|<=\)\s*\(\w.*\)\s*;\s*\(.*\)')
                "echo line_comp
                 let indent_s     = get(line_comp, 1)
@@ -397,8 +397,8 @@ function V_align_eval()
                 let name_right   = get(line_comp, 4)
                 let comment      = get(line_comp, 5)
                 let assign_s     = "assign "
-            elseif (line_str =~ '<=*')
-                let line_comp = matchlist(line_str,'\(\s*\)\(\w\|\S[^;<=]*\S\)\s*\(<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)')
+            elseif (line_str =~ '<=')
+                let line_comp = matchlist(line_str,'^\(\s*\)\(\w\|\S[^;<=]*\S\)\s*\(<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)$')
                "let line_comp = matchlist(line_str,'\(\s*\)\(\w\|\S.*\S\)\s*\(=\|<=\)\s*\(\w\|\S.*\S\)\s*;\s*\(.*\)')
                "let line_comp = matchlist(line_str,'^\s*\(\w.*\)\s*\(=\|<=\)\s*\(\w.*\)\s*;\s*\(.*\)')
                "echo line_comp
@@ -408,8 +408,8 @@ function V_align_eval()
                 let name_right   = get(line_comp, 4)
                 let comment      = get(line_comp, 5)
                 let assign_s     = ""
-            elseif (line_str =~ '=*')
-                let line_comp = matchlist(line_str,'\(\s*\)\(\w\|\S[^;<=]*\S\)\s*\(=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)')
+            elseif (line_str =~ '=')
+                let line_comp = matchlist(line_str,'^\(\s*\)\(\w\|\S[^;=]*\S\)\s*\(=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)$')
                "let line_comp = matchlist(line_str,'^\s*\(\w.*\)\s*\(=\|<=\)\s*\(\w.*\)\s*;\s*\(.*\)')
                "echo line_comp
                 let indent_s     = get(line_comp, 1)
@@ -421,21 +421,21 @@ function V_align_eval()
             endif
 
             if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_left_vec = matchlist(name_left,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+                let name_left_vec = matchlist(name_left,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = get(name_left_vec,2)
             else 
-                let name_left_vec = matchlist(name_left,'\(\w\|\S.*\S\)\s*') 
+                let name_left_vec = matchlist(name_left,'^\s*\(\w\|\S.*\S\)\s*$') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = ""
             endif
 
             if(name_right =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_right_vec  = matchlist(name_right,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+                let name_right_vec  = matchlist(name_right,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_right      = get(name_right_vec,1)
                 let vec_right       = get(name_right_vec,2)
             else 
-                let name_right_vec = matchlist(name_right,'\(\w\|\S.*\S\)\s*') 
+                let name_right_vec = matchlist(name_right,'^\s*\(\w\|\S.*\S\)\s*$') 
                 let name_right     = get(name_right_vec,1)
                 let vec_right      = ""
             endif
@@ -498,7 +498,7 @@ function V_align_eval()
         if (line_str =~ '^\s*\S\+.*')
             if (line_str =~ '^\s*assign\s\+.*')
           "  "参考函数：match matchlist subtitute
-                let line_comp = matchlist(line_str,'\(\s*\)assign\s\+\(\w\|\S[^;<=]*\S\)\s*\(=\|<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)')
+                let line_comp = matchlist(line_str,'^\(\s*\)assign\s\+\(\w\|\S[^;<=]*\S\)\s*\(=\|<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)$')
                "let line_comp = matchlist(line_str,'^\s*assign\s+\(\w.*\)\s*\(=\|<=\)\s*\(\w.*\)\s*;\s*\(.*\)')
                "echo line_comp
                 let indent_s     = get(line_comp, 1)
@@ -507,8 +507,8 @@ function V_align_eval()
                 let name_right   = get(line_comp, 4)
                 let comment      = get(line_comp, 5)
                 let assign_s     = "assign "
-            elseif (line_str =~ '<=*')
-                let line_comp = matchlist(line_str,'\(\s*\)\(\w\|\S[^;<=]*\S\)\s*\(<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)')
+            elseif (line_str =~ '<=')
+                let line_comp = matchlist(line_str,'^\(\s*\)\(\w\|\S[^;<=]*\S\)\s*\(<=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)$')
                "let line_comp = matchlist(line_str,'\(\s*\)\(\w\|\S.*\S\)\s*\(=\|<=\)\s*\(\w\|\S.*\S\)\s*;\s*\(.*\)')
                "let line_comp = matchlist(line_str,'^\s*\(\w.*\)\s*\(=\|<=\)\s*\(\w.*\)\s*;\s*\(.*\)')
                "echo line_comp
@@ -518,8 +518,8 @@ function V_align_eval()
                 let name_right   = get(line_comp, 4)
                 let comment      = get(line_comp, 5)
                 let assign_s     = ""
-            elseif (line_str =~ '=*')
-                let line_comp = matchlist(line_str,'\(\s*\)\(\w\|\S[^;<=]*\S\)\s*\(=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)')
+            elseif (line_str =~ '=')
+                let line_comp = matchlist(line_str,'^\(\s*\)\(\w\|\S[^;<=]*\S\)\s*\(=\)\s*\(\w\|\S[^;]*\S\)\s*;\s*\(.*\)$')
                "let line_comp = matchlist(line_str,'^\s*\(\w.*\)\s*\(=\|<=\)\s*\(\w.*\)\s*;\s*\(.*\)')
                "echo line_comp
                 let indent_s     = get(line_comp, 1)
@@ -531,21 +531,21 @@ function V_align_eval()
             endif
 
             if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_left_vec = matchlist(name_left,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+                let name_left_vec = matchlist(name_left,'^\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = get(name_left_vec,2)
             else 
-                let name_left_vec = matchlist(name_left,'\(\w\|\S.*\S\)\s*') 
+                let name_left_vec = matchlist(name_left,'^\s*\(\w\|\S.*\S\)\s*$') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = ""
             endif
 
             if(name_right =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_right_vec  = matchlist(name_right,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+                let name_right_vec  = matchlist(name_right,'^\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_right      = get(name_right_vec,1)
                 let vec_right       = get(name_right_vec,2)
             else 
-                let name_right_vec = matchlist(name_right,'\(\w\|\S.*\S\)\s*') 
+                let name_right_vec = matchlist(name_right,'^\s*\(\w\|\S.*\S\)\s*$') 
                 let name_right     = get(name_right_vec,1)
                 let vec_right      = ""
             endif
@@ -1275,7 +1275,7 @@ function V_module_variable_def()
         ""module instance for connect: from input port ================
         ""if not from input, must be define from always or assign
         elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwi\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwi\(\d\+\)}.*$')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uwi\(\d\+\)}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = ""
@@ -1300,7 +1300,7 @@ function V_module_variable_def()
         ""module instance for connect: from input port, with parameter =======
         ""if not from input, must be define from always or assign
         elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwi<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwi<\(.*\)>}.*$')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uwi<\(.*\)>}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = ""
@@ -1318,7 +1318,7 @@ function V_module_variable_def()
 
         ""module instance for connect 1: variable define =====================
         elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uw\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uw\(\d\+\)}.*$')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uw\(\d\+\)}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = "wire"
@@ -1342,7 +1342,7 @@ function V_module_variable_def()
 
         ""module instance for connect 2: variable define with parameter ======
         elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uw<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uw<\(.*\)>}.*$')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uw<\(.*\)>}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = "wire"
@@ -1360,7 +1360,7 @@ function V_module_variable_def()
         ""module instance for connect 3: variable define =====================
         ""if not from input, must be define from always or assign
         elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwo\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwo\(\d\+\)}.*$')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uwo\(\d\+\)}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = ""
@@ -1384,7 +1384,7 @@ function V_module_variable_def()
 
         ""module instance for connect 4: variable define with parameter ======
         elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwo<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*).*\/\/.*{uwo<\(.*\)>}.*$')
+            let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uwo<\(.*\)>}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = ""
