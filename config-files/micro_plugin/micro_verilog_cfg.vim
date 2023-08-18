@@ -79,7 +79,7 @@ function V_align_inst_line()
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
-                let con_name_vec = matchlist(con_name,'\(\w\|\S.*\S\|\)\s*') 
+                let con_name_vec = matchlist(con_name,'^\(\w\|\S.*\S\|\)\s*$') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = ""
             endif
@@ -127,7 +127,7 @@ function V_align_inst_line()
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
-                let con_name_vec = matchlist(con_name,'\(\w\|\S·*\S\|\)\s*') 
+                let con_name_vec = matchlist(con_name,'^\(\w\|\S.*\S\|\)\s*$') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = ""
             endif
@@ -153,20 +153,20 @@ function V_align_inst_line()
             endif
 
             if(max_con_vec < 10)
-                let con_vec = printf('%10s', con_vec)
+                let con_vec = printf('%-10s', con_vec)
             elseif(max_con_vec < 20)
-                let con_vec = printf('%20s', con_vec)
+                let con_vec = printf('%-20s', con_vec)
             elseif(max_con_vec < 25)
-                let con_vec = printf('%30s', con_vec)
+                let con_vec = printf('%-30s', con_vec)
             else
-                let con_vec = printf('%40s', con_vec)
+                let con_vec = printf('%-40s', con_vec)
             endif
 
 
 
            "echo max_inst . "  " . max_con
 
-            let line_out  = printf('    .%-s(%-s%s)%-2s%s', inst_name, con_name,con_vec, comma, other)
+            let line_out  = printf('    .%-s(%-s%-s)%-2s%s', inst_name, con_name,con_vec, comma, other)
             call setline(i, line_out)
         endif
     endfor
