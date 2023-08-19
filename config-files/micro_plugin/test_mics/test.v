@@ -50,21 +50,24 @@ U_TEST_INST(
 
 ///* test inst align
 TEST_INST  U_TEST_INST(
-    .a          (a [(a*b_+c)-1:0 ]             ), //I_p
-    .b          (b [sss-1:0]                   ), //I_p
-    .c          (c [ABC-1:0]                   ), //I_p
-    .c          (c [ABC-1    :0  ]             ), //I_p
-    .d          (d [99:0]                      ), //I_p
-    .e          (e                             ), //I_p
-    .f          (f                             ), //O_p
-    .g          ({adfa,fsa}                    ), //O_p
-    .g          ({adfa,   fsa}                 ), //O_p
-    .g          (adfa [a:0],   fsa[b-1:0]      ), //O_p
-    .g          (adfa [a-1:0],   fsa[b-1:0]    ), //O_p
-    .g          (adfa [111:0],   fsa[b-1:0]    ), //O_p
-    .g_xxx      (adfa [111:0],   fsa[b-1:0]    ), //O_p
-    .g_x_99x    (adfa [111:0],   fsa[b-1:0]    ), //O_p
-    .h          (h                             )  //O_p
+    .a               (a [(a*b_+c)-1:0 ]                         ), //I_p
+    .b               (b [sss-1:0]                               ), //I_p
+    .c               (c [ABC-1:0]                               ), //I_p
+    .c               (c [ABC-1    :0  ]                         ), //I_p
+    .d               (d [99:0]                                  ), //I_p
+    .e               (e                                         ), //I_p
+    .f               (f                                         ), //O_p
+    .g               ({adfa,fsa}                                ), //O_p
+    .g               ({adfa,   fsa}                             ), //O_p
+    .g               (adfa [a:0],   fsa[b-1:0]                  ), //O_p
+    .g               (adfa [a-1:0],   fsa[b-1:0]                ), //O_p
+    .g               (adfa [111:0],   fsa[b-1:0]                ), //O_p
+    .g_xxx           (adfa [111:0],   fsa[b-1:0]                ), //O_p
+    .g_x_99x         (adfa [111:0],   fsa[b-1:0]                ), //O_p
+    .h               (h                                         )  //O_p
+    .\(aa.*\)_xxx    (aa_\1_@"vl-name"[]                        ), //O_p
+    .g_x_99x         (aaa_\1_@"(xxx 777)"_@"vl-name"[xxx:0]     ), //O_p
+    .g_x_99x         (aaa_\1_@"(xxx 777)"_@"vl-name"[]          ), //O_p
 );
 
 

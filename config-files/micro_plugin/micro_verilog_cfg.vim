@@ -198,12 +198,12 @@ function V_align_io()
                 let other   = get(line_comp, 6)
             endif
 
-            if(name =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_vec = matchlist(name,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+            if(name =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*$') 
+                let name_vec = matchlist(name,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name     = get(name_vec,1)
                 let vec      = get(name_vec,2)
             else 
-                let name_vec = matchlist(name,'\(\w[a-zA-Z0-9_]*\)\s*') 
+                let name_vec = matchlist(name,'^\s*\(\w[a-zA-Z0-9_]*\)\s*$') 
                 let name     = get(name_vec,1)
                 let vec      = ""
             endif
@@ -226,7 +226,7 @@ function V_align_io()
             endif
         elseif (line_str =~ '^\s*parameter.*')
             let is_para = 1
-            let line_comp = matchlist(line_str,'\s*parameter\s*\(\w\+\)\s*=\s*\([^\/\/,]*[^\s\/,]\)\s*\(,\|\)\s*\(\/\/\+.*\|\)')
+            let line_comp = matchlist(line_str,'^\s*parameter\s*\(\w\+\)\s*=\s*\([^\/\/,]*[^\s\/,]\)\s*\(,\|\)\s*\(\/\/\+.*\|\)')
             let para       = get(line_comp, 1)
             let para_val   = get(line_comp, 2)
             let comma      = get(line_comp, 3)
@@ -271,7 +271,7 @@ function V_align_io()
         for i in range(line_begin, line_end)
             let line_str  = getline(i)
             if (line_str =~ '^\s*parameter.*')
-                let line_comp = matchlist(line_str,'\s*parameter\s*\(\w\+\)\s*=\s*\([^\/\/,]*[^\s\/,]\)\s*\(,\|\)\s*\(\/\/\+.*\|\)')
+                let line_comp = matchlist(line_str,'^\s*parameter\s*\(\w\+\)\s*=\s*\([^\/\/,]*[^\s\/,]\)\s*\(,\|\)\s*\(\/\/\+.*\|\)')
                     let para       = get(line_comp, 1)
                     let para_val   = get(line_comp, 2)
                     let comma      = get(line_comp, 3)
@@ -334,12 +334,12 @@ function V_align_io()
                     let other   = get(line_comp, 6)
                 endif
 
-                if(name =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                    let name_vec = matchlist(name,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+                if(name =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*$') 
+                    let name_vec = matchlist(name,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                     let name     = get(name_vec,1)
                     let vec      = get(name_vec,2)
                 else 
-                    let name_vec = matchlist(name,'\(\w[a-zA-Z0-9_]*\)\s*') 
+                    let name_vec = matchlist(name,'^\s*\(\w[a-zA-Z0-9_]*\)\s*$') 
                     let name     = get(name_vec,1)
                     let vec      = ""
                 endif
@@ -531,7 +531,7 @@ function V_align_eval()
             endif
 
             if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_left_vec = matchlist(name_left,'^\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
+                let name_left_vec = matchlist(name_left,'^\s*(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = get(name_left_vec,2)
             else 
@@ -541,7 +541,7 @@ function V_align_eval()
             endif
 
             if(name_right =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_right_vec  = matchlist(name_right,'^\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
+                let name_right_vec  = matchlist(name_right,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_right      = get(name_right_vec,1)
                 let vec_right       = get(name_right_vec,2)
             else 
