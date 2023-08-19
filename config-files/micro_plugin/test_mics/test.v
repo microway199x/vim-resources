@@ -71,43 +71,45 @@ TEST_INST  U_TEST_INST(
 );
 
 
-    assign a                     =   b                                       ;
-    assign a                     =   c                         [xx:0]        ;
-    assign a                     =   d                         [999:0]       ;
-    assign a_999[10:    0]       =   f                                       ;
-    assign a99  [19:0]           =   c                         [xx:   0]     ;
-    assign a    [xxx:0]          =   d                         [999:0   ]    ;
-    assign a    [yyy:0]          =   c                         [xx:0]        ;
-    assign a    [yyy:0]          =   c                         [xx+yyy-1:0]  ;
-    assign a    [yy+xx:0]        =   c                         [xx+yyy-1:0]  ;
-    assign a    [yy+xx-1:0]      =   c                         [xx+yyy-1:0]  ;
-    assign a    [(yy*a+xx)-1:0]  =   c                         [xx+yyy-1:0]  ;
-    assign a    [(yy*a+xx)-1:0]  =   {a,b,v}                                 ;
-    assign a    [(yy*a+xx)-1:0]  =   {a,  b, v}                              ;
-    assign a    [(yy*a+xx)-1:0]  =   {a[xxx:0],  b[99:0], v[0]}              ;
+    assign a                =   b            ;
+    assign a                =   c[xx:0]      ;
+    assign a                =   d[999:0]     ;
+    assign a_999[10:    0]  =   f            ;
+    assign a99  [19:0]      =   c[xx:   0]   ;
+    assign a    [xxx:0]     =   d[999:0   ]  ;
+    assign a[yyy:0]          =   c[xx:0]        ;
+    assign a[yyy:0]          =   c[xx+yyy-1:0]  ;
+    assign a[yy+xx:0]        =   c[xx+yyy-1:0]  ;
+    assign a[yy+xx-1:0]      =   c[xx+yyy-1:0]  ;
+    assign a[(yy*a+xx)-1:0]  =   c[xx+yyy-1:0]  ;
+    assign a[(yy*a+xx)-1:0]  =   {a,b,v}                     ;
+    assign a[(yy*a+xx)-1:0]  =   {a,  b, v}                  ;
+    assign a[(yy*a+xx)-1:0]  =   {a[xxx:0],  b[99:0], v[0]}  ;
 
     assign {a,b,c}                     =   {a[xxx:0],  b[99:0], v[0]}  ;
     assign {a[xxx:0],  b[99:0], v[0]}  =   {a[xxx:0],  b[99:0], v[0]}  ;
 
 ///always
-    a                 =   b                       ;
-    a                 =   c         [xx:0]        ;
-    a                 =   d         [999:0]       ;
-    a[10:       0  ]  =   f                       ;
-    a[19:0]           =   c         [xx:0]        ;
-    a[xxx:0]          =   d         [999:0]       ;
-    a[yyy:0]          =   c         [xx:0]        ;
-    a[yyy:0]          =   c         [xx+yyy-1:0]  ;
-    a[yy+xx:0]        =   c         [xx+yyy-1:0]  ;
+    a                 =   b         ;
+    a                 =   c[xx:0]   ;
+    a                 =   d[999:0]  ;
+    a[10:       0  ]  =   f         ;
+    a[19:0]     =   c[xx:0]        ;
+    a[xxx:0]    =   d[999:0]       ;
+    a[yyy:0]    =   c[xx:0]        ;
+    a[yyy:0]    =   c[xx+yyy-1:0]  ;
+    a[yy+xx:0]  =   c[xx+yyy-1:0]  ;
+
     a[yy+xx-1:0]      =   c         [xx+yyy-1:0]  ;
     a[(yy*a+xx)-1:0]  =   c         [xx+yyy-1:0]  ;
     a[(yy*a+xx)-1:0]  =   c         [xx+yyy-1:0]  ;
     a[(yy*a+xx)-1:0]  =   {a,b,v}                 ;
     a[(yy*a+xx)-1:0]  =   {a,  b, v}              ;
 
-    a                         [(yy*a+xx)-1:0]  =   {a[xxx:0],  b[99:0], v[0]}  ;
-    {a,b,c}                                    =   {a[xxx:0],  b[99:0], v[0]}  ;
-    {a[xxx:0],  b[99:0], v[0]}                 =   {a[xxx:0],  b[99:0], v[0]}  ;
+    a      [(yy*a+xx)-1:0]  =   {a[xxx:0],  b[99:0], v[0]}  ;
+    {a,b,c}                 =   {a[xxx:0],  b[99:0], v[0]}  ;
+
+    {a[xxx:0],  b[99:0], v[0]}  =   {a[xxx:0],  b[99:0], v[0]}  ;
 ///<=
     a                 <=  b              ;
     a                 <=  c[xx:0]        ;
@@ -133,7 +135,7 @@ TEST_INST  U_TEST_INST(
     {a[xxx:0],  b[99:0], v[0]}  <=  {a[xxx:0],  b[99:0], v[0]}  ;
 
 wavedrom:
-\\                                             _________         _
-\\SN:teatsa                        SW:________/         \_______/    SD:00001111100001
-\\                                             _________         _
-\\SN:tea                           SW:________/         \_______/    SD:00001111100001
+\\                              _________         _
+\\SN:teatsa         SW:________/         \_______/    SD:00001111100001
+\\                              _________         _
+\\SN:tea            SW:________/         \_______/    SD:00001111100001

@@ -420,7 +420,7 @@ function V_align_eval()
                 let assign_s     = ""
             endif
 
-            if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
+            if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*$') 
                 let name_left_vec = matchlist(name_left,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = get(name_left_vec,2)
@@ -530,8 +530,8 @@ function V_align_eval()
                 let assign_s     = ""
             endif
 
-            if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let name_left_vec = matchlist(name_left,'^\s*(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
+            if(name_left =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*$') 
+                let name_left_vec = matchlist(name_left,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_left     = get(name_left_vec,1)
                 let vec_left      = get(name_left_vec,2)
             else 
@@ -540,7 +540,7 @@ function V_align_eval()
                 let vec_left      = ""
             endif
 
-            if(name_right =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
+            if(name_right =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*$') 
                 let name_right_vec  = matchlist(name_right,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let name_right      = get(name_right_vec,1)
                 let vec_right       = get(name_right_vec,2)
