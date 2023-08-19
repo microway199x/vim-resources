@@ -67,15 +67,15 @@ function V_align_inst_line()
             "参考函数：match matchlist subtitute
           ""let line_comp = matchlist(line_str,'\(\w\+\).*(\(.*\))\(.*\)')
            "let line_comp = matchlist(line_str,'\(\w\+\).*(\(\S*\{-}\))\(.*\)')
-            let line_comp = matchlist(line_str,'^\s*\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)$')
+            let line_comp = matchlist(line_str,'^\s*\.\s*\(\S\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)$')
            "echo line_comp
             let inst_name = get(line_comp, 1)
             let con_name  = get(line_comp, 2)
             let comma     = get(line_comp, 3)
             let other     = get(line_comp, 4)
 
-            if(con_name =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let con_name_vec = matchlist(con_name,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+            if(con_name =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*$') 
+                let con_name_vec = matchlist(con_name,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
@@ -126,15 +126,15 @@ function V_align_inst_line()
             "参考函数：match matchlist subtitute
           ""let line_comp = matchlist(line_str,'\(\w\+\).*(\(.*\))\(.*\)')
            "let line_comp = matchlist(line_str,'\.\s*\(\w\+\S*\)\s*(\s*\(\w*\S*\)\s*)\s*\(\S*.*\)')
-            let line_comp = matchlist(line_str,'^\s*\.\s*\(\w\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)$')
+            let line_comp = matchlist(line_str,'^\s*\.\s*\(\S\+\S*\)\s*(\s*\(\w\|\S.*\S\|\)\s*)\s*\(,\|\)\s*\(\S*.*\|\)$')
            "echo line_comp
             let inst_name = get(line_comp, 1)
             let con_name  = get(line_comp, 2)
             let comma     = get(line_comp, 3)
             let other     = get(line_comp, 4)
 
-            if(con_name =~ '\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*') 
-                let con_name_vec = matchlist(con_name,'\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*') 
+            if(con_name =~ '^\s*\w[a-zA-Z0-9_]*\s*\(\[.*\]\)\s*$') 
+                let con_name_vec = matchlist(con_name,'^\s*\(\w[a-zA-Z0-9_]*\)\s*\(\[.*\]\)\s*$') 
                 let con_name     = get(con_name_vec,1)
                 let con_vec      = get(con_name_vec,2)
             else 
