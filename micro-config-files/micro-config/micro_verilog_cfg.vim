@@ -3,9 +3,9 @@
 "" verilog plugin setting 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" 1st vtags setting 
-if(g:islinux)
-    source ~/git/vim-resources/micro-config/vtags-3.10/vtags_vim_api.vim
-endif
+"if(g:islinux)
+    "source ~/git/vim-resources/micro-config-files/micro-plugin/vtags-3.10/vtags_vim_api.vim
+"endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" verilog_systemverilog.vim setting
