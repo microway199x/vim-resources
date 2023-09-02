@@ -44,32 +44,30 @@ endif
 
 if(g:iswindows)
     if has('nvim')
-        source ~\Appdata\Local\nvim\config-files\micro_comm.vim
-        source ~\Appdata\Local\nvim\config-files\micro_keymap.vim
-        source ~\Appdata\Local\nvim\config-files\micro_file_header.vim
-        source ~\Appdata\Local\nvim\config-files\micro_misc.vim
-        source ~\Appdata\Local\nvim\config-files\micro_verilog_cfg.vim
-        source ~\Appdata\Local\nvim\config-files\micro_perl.vim
-        source ~\Appdata\Local\nvim\config-files\micro_plugin_cfg.vim
+        source ~\Appdata\Local\nvim\micro-config\micro_comm.vim
+        source ~\Appdata\Local\nvim\micro-config\micro_keymap.vim
+        source ~\Appdata\Local\nvim\micro-config\micro_file_header.vim
+        source ~\Appdata\Local\nvim\micro-config\micro_misc.vim
+        source ~\Appdata\Local\nvim\micro-config\micro_verilog_cfg.vim
+        source ~\Appdata\Local\nvim\micro-config\micro_perl.vim
+        source ~\Appdata\Local\nvim\micro-config\micro_plugin_cfg.vim
     else 
-        source $VIM\config-files\micro_comm.vim
-        source $VIM\config-files\micro_keymap.vim
-        source $VIM\config-files\micro_file_header.vim
-        source $VIM\config-files\micro_misc.vim
-        source $VIM\config-files\micro_verilog_cfg.vim
-        source $VIM\config-files\micro_perl.vim
-        source $VIM\config-files\micro_plugin_cfg.vim
-        source $VIM\config-files\micro_tags_cfg.vim
+        source $VIM\micro-config\micro_comm.vim
+        source $VIM\micro-config\micro_keymap.vim
+        source $VIM\micro-config\micro_file_header.vim
+        source $VIM\micro-config\micro_misc.vim
+        source $VIM\micro-config\micro_verilog_cfg.vim
+        source $VIM\micro-config\micro_perl.vim
+        source $VIM\micro-config\micro_plugin_cfg.vim
     endif
 else 
-    source ~/git/vim-resources/config-files/micro_comm.vim
-    source ~/git/vim-resources/config-files/micro_keymap.vim
-    source ~/git/vim-resources/config-files/micro_file_header.vim
-    source ~/git/vim-resources/config-files/micro_misc.vim
-    source ~/git/vim-resources/config-files/micro_verilog_cfg.vim
-    source ~/git/vim-resources/config-files/micro_perl.vim
-    source ~/git/vim-resources/config-files/micro_plugin_cfg.vim
-    source ~/git/vim-resources/config-files/micro_tags_cfg.vim
+    source ~/git/vim-resources/micro-config/micro_comm.vim
+    source ~/git/vim-resources/micro-config/micro_keymap.vim
+    source ~/git/vim-resources/micro-config/micro_file_header.vim
+    source ~/git/vim-resources/micro-config/micro_misc.vim
+    source ~/git/vim-resources/micro-config/micro_verilog_cfg.vim
+    source ~/git/vim-resources/micro-config/micro_perl.vim
+    source ~/git/vim-resources/micro-config/micro_plugin_cfg.vim
 endif
 
 "" windows 到 linux下，提示^M为未知命令，使用dos2unix命令

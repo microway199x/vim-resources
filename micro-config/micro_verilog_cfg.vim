@@ -4,7 +4,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "" 1st vtags setting 
 if(g:islinux)
-    source ~/git/vim-resources/config-files/vtags-3.10/vtags_vim_api.vim
+    source ~/git/vim-resources/micro-config/vtags-3.10/vtags_vim_api.vim
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
