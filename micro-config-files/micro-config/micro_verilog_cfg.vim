@@ -1021,6 +1021,61 @@ function V_get_variable_def(line_begin,line_end)
     return name_list
 endfunction
 
+
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+"get module all variable def with width information
+"'''''''''''''''''''''''''''''''''''''''''''''''''''''''
+function V_get_all_var_with_wid()
+    exec "normal gg"
+    /^\s*module
+    let line_begin = line(".")
+    /^\s*);
+    let line_end = line(".")
+    echo line_begin
+    echo line_end
+
+    let name_list = []
+    for i in range(line_begin, line_end)
+        let line_str  = getline(i)
+        if (line_str =~ '^\s*\(input\|output\).*')
+            "参考函数：match matchlist subtitute
+            let line_comp = matchlist(line_str,'\(input\|output\)\s*\(reg\|wire\|\)\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w[a-zA-Z0-9\[\]:_]*\)\s*\(,\|\)\s*\(\/\/.*\|\)\s*$')
+            "echo line_comp
+            let io     = get(line_comp, 1)
+            let regw   = get(line_comp, 2)
+            let signed = get(line_comp, 3)
+            let width  = get(line_comp, 4)
+            let name   = get(line_comp, 5)
+            let comma  = get(line_comp, 6)
+            let other  = get(line_comp, 7)
+
+            let name_wid = name . width
+            let name_wid_s = substitute(name_wid, " ", "", "g")
+                
+            let name_list = add(name_list,name_wid_s)
+        elseif (line_str =~ '^\s*\(reg\|wire\).*')
+                let line_comp = matchlist(line_str,'\s*\(reg\|wire\)\s*\(signed\|\)\s*\(\[.*\]\|\)\s*\(\w\+\)\W*.*\s*\(;\)\s*\(\S.*\|\)\s*$')
+               "echo line_comp
+                let io      = ""
+                let regw    = get(line_comp, 1)
+                let signed  = get(line_comp, 2)
+                let width   = get(line_comp, 3)
+                let name    = get(line_comp, 4)
+                let comma   = get(line_comp, 5)
+                let other   = get(line_comp, 6)
+
+                let name_wid = name . width
+                let name_wid_s = substitute(name_wid, " ", "", "g")
+                    
+                let name_list = add(name_list,name_wid_s)
+        endif
+    endfor
+
+    return name_list
+endfunction
+
+
+
 "'''''''''''''''''''''''''''''''''''''''''''''''''''''''
 "function use for module define wire/reg
 "all use unsigned variable
@@ -1447,4 +1502,49 @@ function V_chk_rst()
     endwhile
 
 endfunction
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Veriolg chk module instance used signal bit match with defined or not
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+function V_chk_bit_mat()
+    let module_var_list=[]
+    let var_width_unmatch_list=[]
+    let module_var_list=V_get_all_var_with_wid()
+
+    for S_VAR in module_var_list
+        let s_var_re = matchlist(S_VAR, '\(\w\+\)\(\[.*\]\|\)')
+        let S_VAR_RAW = s_var_re[1]
+        "search match S_VAR_RAW word line only
+        let S_VAR_RAW_RE = "^\\s*.\\w\\+.*(.*\\<" . S_VAR_RAW . "\\>"
+
+        exec "normal gg"
+
+        while search(S_VAR_RAW_RE, "W") > 0
+            "search until the end of file
+            let line_inst = getline(line("."))
+            if(line_inst =~ '^\s*.\w\+\s*(')   "only inst line checkd
+                let s_inst_re = "^\\s*.\\w\\+\\s*(\\s*.*\\(" . S_VAR_RAW . "\\)\\s*\\(\\[[^\\[\\]]*\\]\\|\\).*)"
+                let s_inst_str_match = matchlist(line_inst, s_inst_re)
+                let inst_var_name = s_inst_str_match[1]
+                let inst_var_width = s_inst_str_match[2]
+
+                let inst_var_name_wid = inst_var_name . inst_var_width
+                "remove string space
+                let inst_var_name_wid = substitute(inst_var_name_wid, " ", "", "g")
+
+                if(S_VAR != inst_var_name_wid)
+                    let line_num = line(".")
+                    let inst_var_unmatch_info = printf("line: %7d,  variable inst used: %s, variable defined as: %s", line_num, inst_var_name_wid, S_VAR)
+                    let var_width_unmatch_list = add(var_width_unmatch_list, inst_var_unmatch_info)
+                endif
+            endif
+        endwhile
+    endfor
+
+    :new chk_unmatch.log
+    :b chk_unmatch.log
+    call append(0, var_width_unmatch_list)
+endfunction
+
+
 
