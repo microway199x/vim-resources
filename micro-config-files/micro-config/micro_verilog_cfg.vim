@@ -1166,7 +1166,7 @@ function V_module_variable_def()
         let line_str = getline(i)
         ""assign express 1==========================================
         if(line_str =~ '^\s*assign.*=.*{uw\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uw\(\d\+\)}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*.*\/\/.*{uw\(\d\+\)}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = "wire"
@@ -1190,7 +1190,7 @@ function V_module_variable_def()
             endif
         ""assign express 2: parameter ==============================
         elseif(line_str =~ '^\s*assign.*=.*{uw<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uw<\(.*\)>}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*.*\/\/.*{uw<\(.*\)>}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = "wire"
@@ -1207,7 +1207,7 @@ function V_module_variable_def()
             endif
         ""assign express 3: output    ==============================
         elseif(line_str =~ '^\s*assign.*=.*{uwo\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uwo\(\d\+\)}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*.*\/\/.*{uwo\(\d\+\)}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = ""
@@ -1231,7 +1231,7 @@ function V_module_variable_def()
             endif
         ""assign express 3: output with parameter ==================
         elseif(line_str =~ '^\s*assign.*=.*{uwo<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*;.*\/\/.*{uwo<\(.*\)>}.*')
+            let line_comp = matchlist(line_str, '^\s*assign\s\+\(\w\+\)\W*.*=.*.*\/\/.*{uwo<\(.*\)>}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
             let v_type = "wire"
@@ -1248,7 +1248,7 @@ function V_module_variable_def()
             endif
         ""always express 1: ========================================
         elseif(line_str =~ '^\s*\w*.*=.*{ur\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{ur\(\d\+\)}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*.*\/\/.*{ur\(\d\+\)}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
@@ -1271,7 +1271,7 @@ function V_module_variable_def()
             endif
         ""always express 2: parameter ==============================
         elseif(line_str =~ '^\s*\w*.*=.*{ur<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{ur<\(.*\)>}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*.*\/\/.*{ur<\(.*\)>}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
@@ -1288,7 +1288,7 @@ function V_module_variable_def()
             endif
         ""always express 3: output =================================
         elseif(line_str =~ '^\s*\w*.*=.*{uro\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{uro\(\d\+\)}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*\/\/.*{uro\(\d\+\)}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
@@ -1312,7 +1312,7 @@ function V_module_variable_def()
 
         ""always express 4: output with parameter ==================
         elseif(line_str =~ '^\s*\w*.*=.*{uro<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*;.*\/\/.*{uro<\(.*\)>}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*\/\/.*{uro<\(.*\)>}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
