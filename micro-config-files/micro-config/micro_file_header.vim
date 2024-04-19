@@ -57,15 +57,15 @@ endfunction
 "NUMread: insert file content after NUM line
 "read: insert file content after current cursor line
 function AddVerilogTpl()
-    :0read  $VIM/micro_config/file_tpl/verilog.tpl
+    :0read  $VIM/micro-config/file_tpl/verilog.tpl
     call UpdateTitle()
 endfunction
 
 " autocmd Bufxxx *.v,*.sv,*.c command   " more than one file type must not has
 " space, shall only use  "," split
 autocmd BufNewFile *.v,*.sv  call AddVerilogTpl()
-autocmd BufNewFile *.lua  :0r $VIM/micro_config/file_tpl/lua.tpl
-autocmd BufNewFile *.py  :0r $VIM/micro_config/file_tpl/python.tpl
+autocmd BufNewFile *.lua  :0r $VIM/micro-config/file_tpl/lua.tpl
+autocmd BufNewFile *.py  :0r $VIM/micro-config/file_tpl/python.tpl
 
 
 

@@ -70,8 +70,9 @@ else
 endif
 "autocmd GUIEnter * simalt ~x   "windows下启动之后默认最大化
 "set guioptions+=m               "显示菜单栏，如果不设置则都显示
-set guioptions=m               "显示菜单栏，如果不设置则都显示
-"set guioptions+=T              "显示工具栏,guioptions如果设置了则只能赋一个值，
+"set guioptions-=m               "不显示菜单栏，如果不设置则都显示
+"set guioptions+=T               "显示工具栏,
+set guioptions-=T               "不显示工具栏,
 
 set scrolloff=7                 "设置光标所在位置最高和最低到边界行数为3
 set incsearch

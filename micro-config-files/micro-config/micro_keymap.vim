@@ -27,6 +27,6 @@ nnoremap <esc><esc>  :nohl<cr>   " remove serach hightlight
 "==================================================================
 
 inorea begin begin<cr><cr>end<up>
-inorea alws always @(posedge clk or negedge rst_n) begin<cr><cr>end<up>if(rst_n == 1'b0) begin<cr><cr>end<up>
+inorea alws always @(posedge clk or negedge rst_n) begin<cr><cr>end<up>    if(rst_n == 1'b0) begin<cr><cr>end<up>
 inorea alwc always @(*) begin<cr><cr>end<up>
-iab casec case()<cr>default:<cr>endcase<up><up>
+iab casec case()<cr>    default:<cr>endcase<up><up>
