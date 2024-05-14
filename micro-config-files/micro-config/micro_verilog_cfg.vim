@@ -1242,8 +1242,32 @@ function V_module_variable_def()
                 call add(name_list_output_port,name_s)
             endif
         ""always express 1: ========================================
-        elseif(line_str =~ '^\s*\w*.*=.*{ur\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*.*\/\/.*{ur\(\d\+\)}.*')
+        "expression as follow not supported
+        "aaa:d21_x[WID*A-1:0]  <=   xxxx  ;//{ur....}
+        elseif(line_str =~ '^.*[:]\s*\w\+\s*[<]*=.*{ur\d\+}.*')
+            let line_comp = matchlist(line_str, '^.*[:]\s*\(\w\+\)\s*\(=\|<=\).*.*\/\/.*{ur\(\d\+\)}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
+            else 
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
+            endif
+        elseif(line_str =~ '^\s*\w\+.*=.*{ur\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*.*\/\/.*{ur\(\d\+\)}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
@@ -1265,8 +1289,24 @@ function V_module_variable_def()
                 call add(name_list,name_s)
             endif
         ""always express 2: parameter ==============================
-        elseif(line_str =~ '^\s*\w*.*=.*{ur<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*.*\/\/.*{ur<\(.*\)>}.*')
+        elseif(line_str =~ '^.*[:]\s*\w\+\s*[<]*=.*{ur<.*>}.*')
+            let line_comp = matchlist(line_str, '^.*[:]\s*\(\w\+\)\s*\(=\|<=\).*.*\/\/.*{ur<\(.*\)>}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_user_def_var, name_s) >= 0)
+                echo name_s . ":: is already user defined"
+            else 
+                let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
+                call add(name_list,name_s)
+            endif
+        elseif(line_str =~ '^\s*\w\+.*=.*{ur<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*.*\/\/.*{ur<\(.*\)>}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
@@ -1282,8 +1322,30 @@ function V_module_variable_def()
                 call add(name_list,name_s)
             endif
         ""always express 3: output =================================
-        elseif(line_str =~ '^\s*\w*.*=.*{uro\d\+}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*\/\/.*{uro\(\d\+\)}.*')
+        elseif(line_str =~ '^.*[:]\s*\w\+\s*[<]*=.*{uro\d\+}.*')
+            let line_comp = matchlist(line_str, '^.*[:]\s*\(\w\+\)\s*\(=\|<=\).*\/\/.*{uro\(\d\+\)}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_nr = str2nr(width)
+            if(width_nr ==1)
+                let width_str = ""
+            else 
+                let width_out = width_nr -1
+                let width_str = printf("[%3s:0]",width_out)
+            endif
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is already output port"
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
+            endif
+        elseif(line_str =~ '^\s*\w\+.*=.*{uro\d\+}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*\/\/.*{uro\(\d\+\)}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
@@ -1305,9 +1367,26 @@ function V_module_variable_def()
                 call add(name_list_output_port,name_s)
             endif
 
+
         ""always express 4: output with parameter ==================
-        elseif(line_str =~ '^\s*\w*.*=.*{uro<.*>}.*')
-            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\(=\|<=\).*\/\/.*{uro<\(.*\)>}.*')
+        elseif(line_str =~ '^.*[:]\s*\w\+\s*[<]*=.*{uro<.*>}.*')
+            let line_comp = matchlist(line_str, '^.*[:]\s*\(\w\+\)\s*\(=\|<=\).*\/\/.*{uro<\(.*\)>}.*')
+            let name_s = get(line_comp,1)
+            let width  = get(line_comp,3)
+            let v_type = "reg"
+
+            let width_str = printf("[%5s -1:0]",width)
+
+            " check if variable is output or not 
+            " if index(xxx) = -1, mean not in list, if >=0 in list
+            if (index(module_output_port_list, name_s) >= 0)
+                echo name_s . ":: is already output port"
+            else 
+                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                call add(name_list_output_port,name_s)
+            endif
+        elseif(line_str =~ '^\s*\w\+.*=.*{uro<.*>}.*')
+            let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*\/\/.*{uro<\(.*\)>}.*')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,3)
             let v_type = "reg"
