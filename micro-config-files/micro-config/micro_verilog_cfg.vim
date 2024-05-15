@@ -221,7 +221,7 @@ function V_align_io()
             endif
         elseif (line_str =~ '^\s*parameter.*')
             let is_para = 1
-            let line_comp = matchlist(line_str,'^\s*parameter\s*\(\w\+\)\s*=\s*\([^\/\/,]*[^\s\/,]\)\s*\(,\|\)\s*\(\/\/\+.*\|\)')
+            let line_comp = matchlist(line_str,'^\s*parameter\s*\(\w\+\)\s*=\s*\([^\/,;]*[^\s\/,;]\)\s*\(,\|;\|\)\s*\(\/\/\+.*\|\)')
             let para       = get(line_comp, 1)
             let para_val   = get(line_comp, 2)
             let comma      = get(line_comp, 3)
@@ -266,22 +266,23 @@ function V_align_io()
         for i in range(line_begin, line_end)
             let line_str  = getline(i)
             if (line_str =~ '^\s*parameter.*')
-                let line_comp = matchlist(line_str,'^\s*parameter\s*\(\w\+\)\s*=\s*\([^\/\/,]*[^\s\/,]\)\s*\(,\|\)\s*\(\/\/\+.*\|\)')
-                    let para       = get(line_comp, 1)
-                    let para_val   = get(line_comp, 2)
-                    let comma      = get(line_comp, 3)
-                    let other      = get(line_comp, 4)
-                    let para_val_list = matchlist(para_val,'\(.*\S\)\s*$')
-                    let para_val   = get(para_val_list, 1)
+                let line_comp = matchlist(line_str,'^\s*parameter\s*\(\w\+\)\s*=\s*\([^\/,;]*[^\s\/,;]\)\s*\(,\|;\|\)\s*\(\/\/\+.*\|\)')
+                let para       = get(line_comp, 1)
+                let para_val   = get(line_comp, 2)
+                let comma      = get(line_comp, 3)
+                let other      = get(line_comp, 4)
+                let para_val_list = matchlist(para_val,'\(.*\S\)\s*$')
+                let para_val   = get(para_val_list, 1)
+            
+
+                let para = printf(para_format , para)
+   
+                let para_val = printf(para_val_format, para_val)
+                "echo line_comp
+                let line_out  = printf('    parameter %s = %s %1s %-s', para,para_val,comma, other)
+                "echo line_out
+                call setline(i, line_out)
             endif
-
-            let para = printf(para_format , para)
-
-            let para_val = printf(para_val_format, para_val)
-            "echo line_comp
-            let line_out  = printf('    parameter %s = %s %1s %-s', para,para_val,comma, other)
-            "echo line_out
-            call setline(i, line_out)
         endfor
     else   
     "if not paramenter , input /output 
