@@ -1182,7 +1182,14 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                "if all name_s attribute is the same, drop signal, 
+                "if not, add it, 
+                "if signal name is same,attribute different, take care and use EDA tools check it,
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list,name_s)
+                endif
             endif
         ""assign express 2: parameter ==============================
         elseif(line_str =~ '^\s*assign.*=.*{uw<.*>}.*')
@@ -1199,7 +1206,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list,name_s)
+                endif
             endif
         ""assign express 3: output    ==============================
         elseif(line_str =~ '^\s*assign.*=.*{uwo\d\+}.*')
@@ -1223,7 +1234,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already output port"
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+                if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif
             endif
         ""assign express 3: output with parameter ==================
         elseif(line_str =~ '^\s*assign.*=.*{uwo<.*>}.*')
@@ -1240,7 +1255,11 @@ function V_module_variable_def()
                 echo name_s . ":: is alreasy output port"
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+                if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif 
             endif
         ""always express 1: ========================================
         "expression as follow not supported
@@ -1265,7 +1284,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list,name_s)
+                endif                
             endif
         elseif(line_str =~ '^\s*\w\+.*=.*{ur\d\+}.*')
             let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*.*\/\/.*{ur\(\d\+\)}.*')
@@ -1287,7 +1310,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list,name_s)
+                endif                 
             endif
         ""always express 2: parameter ==============================
         elseif(line_str =~ '^.*[:]\s*\w\+\s*[<]*=.*{ur<.*>}.*')
@@ -1304,7 +1331,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list,name_s)
+                endif               
             endif
         elseif(line_str =~ '^\s*\w\+.*=.*{ur<.*>}.*')
             let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*.*\/\/.*{ur<\(.*\)>}.*')
@@ -1320,7 +1351,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list,name_s)
+                endif 
             endif
         ""always express 3: output =================================
         elseif(line_str =~ '^.*[:]\s*\w\+\s*[<]*=.*{uro\d\+}.*')
@@ -1343,7 +1378,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already output port"
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+               if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif 
             endif
         elseif(line_str =~ '^\s*\w\+.*=.*{uro\d\+}.*')
             let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*\/\/.*{uro\(\d\+\)}.*')
@@ -1365,7 +1404,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already output port"
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+                if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif               
             endif
 
 
@@ -1384,7 +1427,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already output port"
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+                if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif 
             endif
         elseif(line_str =~ '^\s*\w\+.*=.*{uro<.*>}.*')
             let line_comp = matchlist(line_str, '^\s*\(\w\+\)\W*.*\s*\(=\|<=\).*\/\/.*{uro<\(.*\)>}.*')
@@ -1400,7 +1447,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already output port"
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+                if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif 
             endif
         ""module instance for connect: from input port ================
         ""if not from input, must be define from always or assign
@@ -1424,7 +1475,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already input port"
             else 
                 let name_s = printf('input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_input_port,name_s)
+                if (index(name_list_input_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_input_port,name_s)
+                endif 
             endif
 
         ""module instance for connect: from input port, with parameter =======
@@ -1443,7 +1498,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already input port"
             else 
                 let name_s = printf('input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_input_port,name_s)
+                if (index(name_list_input_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_input_port,name_s)
+                endif 
             endif
 
         ""module instance for connect 1: variable define =====================
@@ -1467,7 +1526,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list,name_s)
+                endif 
             endif
 
         ""module instance for connect 2: variable define with parameter ======
@@ -1485,7 +1548,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already user defined"
             else 
                 let name_s = printf('%-5s %-20s %-40s ;',v_type, width_str, name_s)
-                call add(name_list,name_s)
+                if (index(name_list, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list, name_s)
+                endif 
             endif
         ""module instance for connect 3: variable define =====================
         ""if not from input, must be define from always or assign
@@ -1509,7 +1576,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already output port"
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+                if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif 
             endif
 
         ""module instance for connect 4: variable define with parameter ======
@@ -1527,7 +1598,11 @@ function V_module_variable_def()
                 echo name_s . ":: is already output port "
             else 
                 let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
-                call add(name_list_output_port,name_s)
+                if (index(name_list_output_port, name_s) >= 0)
+                    echo name_s . ":: is already defined, Droped-------"
+                else  
+                    call add(name_list_output_port,name_s)
+                endif 
             endif
         endif 
     endfor
