@@ -117,6 +117,8 @@ function! V_seq(seq_str,start,num,step)
     endif
     
     let line_out = ''
+   "设置输出位宽，不够位宽时，填充0
+    let line_out_format="%0" . str_len. "d"
 
     for i_s in range(num)
         let num_str = ''
@@ -127,8 +129,7 @@ function! V_seq(seq_str,start,num,step)
         if(is_char_seq == 1)
             let num_str_o = nr2char(num_dec)
         else
-            let num_str = printf('%d',num_dec)
-            let num_str = '0000' . num_str
+            let num_str = printf(line_out_format,num_dec)
             let num_str_l = strlen(num_str)
             let num_str_p = num_str_l - str_len
            "let num_str_o = num_str[num_str_l-3] . num_str[num_str_l-2] . num_str[num_str_l-1]
