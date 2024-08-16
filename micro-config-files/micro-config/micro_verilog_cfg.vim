@@ -1484,7 +1484,7 @@ function V_module_variable_def()
 
         ""module instance for connect: from input port, with parameter =======
         ""if not from input, must be define from always or assign
-        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwi<.*>}.*')
+        elseif(line_str =~ '^\s*\..*(\s*\S.*).*\/\/.*{uwi<.*>}.*')
             let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uwi<\(.*\)>}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
@@ -1506,7 +1506,7 @@ function V_module_variable_def()
             endif
 
         ""module instance for connect 1: variable define =====================
-        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uw\d\+}.*')
+        elseif(line_str =~ '^\s*\..*(\s*\S.*).*\/\/.*{uw\d\+}.*')
             let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uw\(\d\+\)}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
@@ -1534,7 +1534,7 @@ function V_module_variable_def()
             endif
 
         ""module instance for connect 2: variable define with parameter ======
-        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uw<.*>}.*')
+        elseif(line_str =~ '^\s*\..*(\s*\S.*).*\/\/.*{uw<.*>}.*')
             let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uw<\(.*\)>}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
@@ -1556,7 +1556,7 @@ function V_module_variable_def()
             endif
         ""module instance for connect 3: variable define =====================
         ""if not from input, must be define from always or assign
-        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwo\d\+}.*')
+        elseif(line_str =~ '^\s*\..*(\s*\S.*).*\/\/.*{uwo\d\+}.*')
             let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uwo\(\d\+\)}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
@@ -1584,7 +1584,7 @@ function V_module_variable_def()
             endif
 
         ""module instance for connect 4: variable define with parameter ======
-        elseif(line_str =~ '^\s*\..*(.*).*\/\/.*{uwo<.*>}.*')
+        elseif(line_str =~ '^\s*\..*(\s*\S.*).*\/\/.*{uwo<.*>}.*')
             let line_comp = matchlist(line_str, '^\s*\.\s*\w\+\s*(\s*\(\w\+\)\W*.*).*\/\/.*{uwo<\(.*\)>}.*$')
             let name_s = get(line_comp,1)
             let width  = get(line_comp,2)
