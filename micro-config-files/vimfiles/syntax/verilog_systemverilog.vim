@@ -116,7 +116,7 @@ syn match   verilogNumber      "\<[+-]\?[0-9_]\+\(\.[0-9_]*\)\?\(e[0-9_]*\)\?\>"
 syn match   verilogNumber      "\<\d[0-9_]*\(\.[0-9_]\+\)\=\([fpnum]\)\=s\>"
 syn keyword verilogNumber      1step
 
-syn keyword verilogTodo        contained TODO FIXME
+syn keyword verilogTodo        contained TODO FIXME DONE CATION
 
 syn match   verilogOperator    "[&|~><!)(*#%@+/=?:;}{,.\^\-\[\]]"
 

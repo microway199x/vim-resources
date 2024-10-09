@@ -1233,7 +1233,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is already output port"
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1254,7 +1254,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is alreasy output port"
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1377,7 +1377,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is already output port"
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1403,7 +1403,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is already output port"
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1426,7 +1426,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is already output port"
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1446,7 +1446,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is already output port"
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1474,7 +1474,7 @@ function V_module_variable_def()
             if (index(module_input_port_list, name_s) >= 0)
                 echo name_s . ":: is already input port"
             else 
-                let name_s = printf('input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_input_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1497,7 +1497,7 @@ function V_module_variable_def()
             if (index(module_input_port_list, name_s) >= 0)
                 echo name_s . ":: is already input port"
             else 
-                let name_s = printf('input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    input  %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_input_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1575,7 +1575,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is already output port"
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
@@ -1597,7 +1597,7 @@ function V_module_variable_def()
             if (index(module_output_port_list, name_s) >= 0)
                 echo name_s . ":: is already output port "
             else 
-                let name_s = printf('output %-5s %-20s %-40s ,',v_type, width_str, name_s)
+                let name_s = printf('    output %-5s %-20s %-40s ,',v_type, width_str, name_s)
                 if (index(name_list_output_port, name_s) >= 0)
                     echo name_s . ":: is already defined, Droped-------"
                 else  
