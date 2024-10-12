@@ -58,7 +58,7 @@ endfunction
 "read: insert file content after current cursor line
 function AddVerilogTpl()
     :0read  $VIM/micro-config/file_tpl/verilog.tpl
-    call UpdateTitle()
+    call AddTitle()
 endfunction
 
 " autocmd Bufxxx *.v,*.sv,*.c command   " more than one file type must not has
