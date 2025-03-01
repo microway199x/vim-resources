@@ -10,7 +10,8 @@ neovim:
 	rm -rf /home/micro/.config/nvim/colors
 	rm -rf /home/micro/.config/nvim
 	mkdir /home/micro/.config/nvim
-	ln -s /home/micro/git/vim-resources/micro-config-files/init.vim  /home/micro/.config/nvim/init.vim
+	##ln -s /home/micro/git/vim-resources/micro-config-files/init.vim  /home/micro/.config/nvim/init.vim
+	cp /home/micro/git/vim-resources/micro-config-files/init.vim  /home/micro/.config/nvim/init.vim -rf
 	cp /home/micro/git/vim-resources/micro-config-files/vimfiles/colors /home/micro/.config/nvim/colors -rf
 	cp /home/micro/git/vim-resources/micro-config-files/vimfiles/* /home/micro/.config/nvim/ -rf
 all:gvim neovim

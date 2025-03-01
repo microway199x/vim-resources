@@ -65,7 +65,7 @@ set clipboard+=unnamed          " 与windows共享剪贴板
 if(g:iswindows)
     set guifont=Consolas:h12    " windows设置方式，字体与字体大小之间为:
 else
-    set guifont=Monospace\ 12   " unix设置方式,字体与字体大小之间为空格，\用来转义空格字符
+    set guifont=Monospace:h12   " unix设置方式,字体与字体大小之间为空格，\用来转义空格字符
    "set guifont=Courier\ New:h11   "\ 为转义字符  转义空格
 endif
 "autocmd GUIEnter * simalt ~x   "windows下启动之后默认最大化
