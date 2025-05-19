@@ -1025,7 +1025,7 @@ function V_get_all_var_with_wid()
     exec "normal gg"
     /^\s*module
     let line_begin = line(".")
-    /^\s*);
+    /^\s*endmodule
     let line_end = line(".")
     echo line_begin
     echo line_end
