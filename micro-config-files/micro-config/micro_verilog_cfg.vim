@@ -35,7 +35,8 @@ nmap <Leader>vm :call V_verilog_mode()<CR>
 function V_verilog_mode()
     exec "w!"
     let fname = expand('%')  " get current buffer filename 
-    let v_cmd = "!emacs --batch " . fname . " -f verilog-batch-auto"
+    "emace gen
+    let v_cmd = "!emacs --batch " . fname . " -f verilog-auto -f save-buffer"
     " refresh current buffer 
     :e
 endfunc
